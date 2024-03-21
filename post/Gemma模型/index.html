@@ -1,0 +1,273 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Gemma模型 | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Gemma模型
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2024-02-24 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/dqgfF5V7n/" class="post-tags">
+                            # LLM
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <blockquote>
+<p>谷歌Gemma大模型，作为谷歌在人工智能领域的一项重大突破，代表了当前最先进的自然语言处理技术。该模型通过大规模的深度学习，能够在各种任务中展现出卓越的性能，包括但不限于文本生成、文本分类、文本理解等。Gemma的出现，为人工智能的广泛应用开辟了新的可能性，也为我们开启了一个智能化、高效化的未来世界。</p>
+</blockquote>
+<figure data-type="image" tabindex="1"><img src="https://flowus.cn/preview/89bb040d-3669-4b39-83dd-74e51559bb75" alt="image.png" loading="lazy"></figure>
+<p>Gemma开发文档：<a href="https://ai.google.dev/gemma/docs/setup">https://ai.google.dev/gemma/docs/setup</a></p>
+<h2 id="快速开始">快速开始</h2>
+<p>建议使用Colab-T4</p>
+<pre><code class="language-Python">import os
+from google.colab import userdata
+
+# Note: `userdata.get` is a Colab API. If you're not using Colab, set the env
+# vars as appropriate for your system.
+os.environ[&quot;KAGGLE_USERNAME&quot;] = userdata.get('KAGGLE_USERNAME')
+os.environ[&quot;KAGGLE_KEY&quot;] = userdata.get('KAGGLE_KEY')
+</code></pre>
+<pre><code class="language-Shell"># Install Keras 3 last. See https://keras.io/getting_started/ for more details.
+!pip install -q -U keras-nlp
+!pip install -q -U keras&gt;=3
+</code></pre>
+<pre><code class="language-Python">import keras
+import keras_nlp
+
+print(keras.__version__)
+</code></pre>
+<pre><code class="language-Python">import os
+
+os.environ[&quot;KERAS_BACKEND&quot;] = &quot;jax&quot;  # Or &quot;tensorflow&quot; or &quot;torch&quot;.
+</code></pre>
+<p>Keras 是一种高级、多框架深度学习 API，旨在简单易用。 keras3 允许您选择后端：TensorFlow、JAX 或 PyTorch。</p>
+<pre><code class="language-Python">gemma_lm = keras_nlp.models.GemmaCausalLM.from_preset(&quot;gemma_2b_en&quot;)
+gemma_lm.summary()
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://flowus.cn/preview/647a2c94-1063-4a6b-81fe-dd8b2f704938" alt="image.png" loading="lazy"></figure>
+<pre><code class="language-Python">gemma_lm.generate(&quot;Keras is a&quot;, max_length=30)
+</code></pre>
+<pre><code class="language-Python">gemma_lm.generate(
+    [&quot;Keras is a&quot;,
+     &quot;How does the brain work?&quot;],
+    max_length=64)
+</code></pre>
+<pre><code class="language-Python">gemma_lm.compile(sampler=&quot;top_k&quot;)  # greedy or top_k
+gemma_lm.generate(&quot;Premier league is the best league in Europe because&quot;, max_length=64)
+</code></pre>
+<h2 id="ollama-本地部署-gemma">Ollama 本地部署 Gemma</h2>
+<pre><code class="language-Shell">paru -S ollama-cuda
+</code></pre>
+<pre><code class="language-Shell">ollama pull Gemma:2b
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/rust-base-1/" class="post-title gt-a-link">
+                    Rust简易入门（一）变量与常见数据类型
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

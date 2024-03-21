@@ -1,0 +1,326 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Coggle 24/1月竞赛学习：动手学RAG | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Coggle 24/1月竞赛学习：动手学RAG
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2024-03-04 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/CTDLcZ_rR/" class="post-tags">
+                            # coggle
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="内容介绍">内容介绍</h2>
+<p>检索增强生成（RAG）技术是为了克服大型语言模型（LLM）在生成连贯、自然的文本，回答问题，并执行其他复杂的语言任务中存在的一些固有的局限性，如“模型幻觉问题”、“时效性问题”和“数据安全问题”。</p>
+<figure data-type="image" tabindex="1"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/uoTGEibAZUEiaGXziasryXwGib7eSThrZPN1FfDibq6Xsyj13UUmvTpMu9zXuTg8OhHTTbY1qiaB6jw3vwLUmrKXQ9jQ/640?wx_fmt=jpeg&amp;from=appmsg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="https://mmbiz.qpic.cn/sz_mmbiz_jpg/uoTGEibAZUEiaGXziasryXwGib7eSThrZPN1FfDibq6Xsyj13UUmvTpMu9zXuTg8OhHTTbY1qiaB6jw3vwLUmrKXQ9jQ/640?wx_fmt=jpeg&amp;from=appmsg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" loading="lazy"></figure>
+<p>RAG技术结合了大型语言模型的强大生成能力和检索系统的精确性。它允许模型在生成文本时，从外部知识库中检索相关信息，从而提高生成内容的准确性、相关性和时效性。这种方法不仅增强了模型的回答能力，还减少了生成错误信息的风险。</p>
+<p>本月的学习内容主要围绕检索增强生成（RAG）技术展开：</p>
+<ul>
+<li>
+<p>RAG技术背景与动机</p>
+</li>
+<li>
+<p>RAG技术基本原理和技术流程</p>
+</li>
+<li>
+<p>知识库构建与管理、检索模块技术</p>
+</li>
+<li>
+<p>ChatGPT/ChatGLM的API使用</p>
+</li>
+</ul>
+<h2 id="动手学rag">动手学RAG</h2>
+<h3 id="背景介绍">背景介绍</h3>
+<p>本次活动参赛选手以大模型为中心制作一个问答系统，回答用户的汽车相关问题。参赛选手需要根据问题，在文档中定位相关信息的位置，并根据文档内容通过大模型生成相应的答案。涉及的问题主要围绕汽车使用、维修、保养等方面。</p>
+<pre><code class="language-Plain">问题1：怎么打开危险警告灯？
+答案1：危险警告灯开关在方向盘下方，按下开关即可打开危险警告灯。
+
+问题2：车辆如何保养？
+答案2：为了保持车辆处于最佳状态，建议您定期关注车辆状态，包括定期保养、洗车、内部清洁、外部清洁、轮胎的保养、低压蓄电池的保养等。
+
+问题3：靠背太热怎么办？
+答案3：您好，如果您的座椅靠背太热，可以尝试关闭座椅加热功能。在多媒体显示屏上依次点击空调开启按键→座椅→加热，在该界面下可以关闭座椅加热。
+</code></pre>
+<h3 id="打卡任务">打卡任务</h3>
+<table>
+<thead>
+<tr>
+<th>任务名称</th>
+<th>所需技能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>任务1：初始RAG</td>
+<td>无</td>
+</tr>
+<tr>
+<td>任务2：ChatGPT/GLM API使用</td>
+<td>Python</td>
+</tr>
+<tr>
+<td>任务3：读取汽车问答数据</td>
+<td>Python</td>
+</tr>
+<tr>
+<td>任务4：文本索引与答案检索</td>
+<td>TFIDF、BM25</td>
+</tr>
+<tr>
+<td>任务5：文本嵌入与向量检索</td>
+<td>Embedding、transformer</td>
+</tr>
+<tr>
+<td>任务6：文本多路召回与重排序</td>
+<td>ReRank</td>
+</tr>
+<tr>
+<td>任务7：文本问答Promopt优化</td>
+<td>Python</td>
+</tr>
+<tr>
+<td>任务8：问答意图识别（进阶方向）</td>
+<td>BERT/TFIDF</td>
+</tr>
+<tr>
+<td>任务9：问答关键词提取（进阶方向）</td>
+<td>TextRank</td>
+</tr>
+<tr>
+<td>任务10：扩展词与扩展查询（进阶方向）</td>
+<td>Word2Vec/BART</td>
+</tr>
+<tr>
+<td>任务11：本地微调ChatGLM（进阶方向）</td>
+<td>ChatGLM</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="具体流程">具体流程</h2>
+<p><a href="https://flowus.cn/596b0187-f5a8-4bf2-a2c5-c4caaaed1cd2">任务1：初始化RAG</a></p>
+<p><a href="https://flowus.cn/836534cb-4bf9-441b-a85e-4ed336b0866b">任务2：ChatGPT/GLM/文心 API使用</a></p>
+<p><a href="https://flowus.cn/3e3e9dd0-c678-409d-b203-712f96e42c6f">任务3：读取汽车问答数据</a></p>
+<p><a href="https://flowus.cn/fa9a8635-9be2-4154-b998-619195c06687">任务4：文本索引与答案检索</a></p>
+<p><a href="https://flowus.cn/234fa273-4c69-45de-9e86-59c956541406">任务5：文本嵌入与向量检索</a></p>
+<p><a href="https://flowus.cn/ba10cc72-77f5-41f9-8499-5d52a7d4a535">任务6：文本多路召回与重排序</a></p>
+<p><a href="https://flowus.cn/ae310880-2cec-42d6-8aff-b22cc071d81c">任务7：文本问答Promopt优化</a></p>
+<p><a href="https://flowus.cn/f2186b72-a199-4a00-9f0b-fb7243c056ba">任务8：问答意图识别（未完成）</a></p>
+<p><a href="https://flowus.cn/70f5bcbd-9bb0-4e70-9db3-79d22f463eae">任务9：问答关键词提取（未完成）</a></p>
+<p><a href="https://flowus.cn/1f933e88-8fe0-4704-8aa1-189e7e0ee53a">任务10：扩展词与扩展查询（未完成）</a></p>
+<p><a href="https://flowus.cn/14a57f52-34e6-4ec9-8bc2-a897e01a872b">任务11：本地微调ChatGLM（未完成）</a></p>
+<hr>
+<h2 id="资料学习">资料学习</h2>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/Kaggle知识点：zarr分块和压缩的矩阵格式/" class="post-title gt-a-link">
+                    Kaggle知识点：zarr分块和压缩的矩阵格式
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

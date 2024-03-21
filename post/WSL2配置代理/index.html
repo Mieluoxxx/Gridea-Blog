@@ -1,0 +1,308 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>WSL2配置代理 | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    WSL2配置代理
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-03-02 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/S-NXWcxUla3/" class="post-tags">
+                            # Clash
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <p>WSL2（Debian/Ubuntu），Clash代理的解决方案</p>
+<!-- more -->
+<p>新建<code>proxy.sh</code>文件，内容如下：</p>
+<pre><code class="language-bash">#!/bin/sh
+hostip=$(cat /etc/resolv.conf | grep nameserver | awk '{ print $2 }')
+wslip=$(hostname -I | awk '{print $1}')
+port=7890
+ 
+PROXY_HTTP=&quot;http://${hostip}:${port}&quot;
+ 
+set_proxy(){
+  export http_proxy=&quot;${PROXY_HTTP}&quot;
+  export HTTP_PROXY=&quot;${PROXY_HTTP}&quot;
+ 
+  export https_proxy=&quot;${PROXY_HTTP}&quot;
+  export HTTPS_proxy=&quot;${PROXY_HTTP}&quot;
+ 
+  export ALL_PROXY=&quot;${PROXY_SOCKS5}&quot;
+  export all_proxy=${PROXY_SOCKS5}
+ 
+  git config --global http.https://github.com.proxy ${PROXY_HTTP}
+  git config --global https.https://github.com.proxy ${PROXY_HTTP}
+ 
+  echo &quot;Proxy has been opened.&quot;
+}
+ 
+unset_proxy(){
+  unset http_proxy
+  unset HTTP_PROXY
+  unset https_proxy
+  unset HTTPS_PROXY
+  unset ALL_PROXY
+  unset all_proxy
+  git config --global --unset http.https://github.com.proxy
+  git config --global --unset https.https://github.com.proxy
+ 
+  echo &quot;Proxy has been closed.&quot;
+}
+ 
+test_setting(){
+  echo &quot;Host IP:&quot; ${hostip}
+  echo &quot;WSL IP:&quot; ${wslip}
+  echo &quot;Try to connect to Google...&quot;
+  resp=$(curl -I -s --connect-timeout 5 -m 5 -w &quot;%{http_code}&quot; -o /dev/null www.google.com)
+  if [ ${resp} = 200 ]; then	
+    echo &quot;Proxy setup succeeded!&quot;
+  else
+    echo &quot;Proxy setup failed!&quot;
+  fi
+}
+ 
+if [ &quot;$1&quot; = &quot;set&quot; ]
+then
+  set_proxy
+ 
+elif [ &quot;$1&quot; = &quot;unset&quot; ]
+then
+  unset_proxy
+ 
+elif [ &quot;$1&quot; = &quot;test&quot; ]
+then
+  test_setting
+else
+  echo &quot;Unsupported arguments.&quot;
+fi
+</code></pre>
+<ul>
+<li>source ./proxy.sh set：开启代理</li>
+<li>source ./proxy.sh unset：关闭代理</li>
+<li>source ./proxy.sh test：查看代理状态</li>
+</ul>
+<h3 id="第四步对任意路径开启代理">第四步对任意路径开启代理</h3>
+<p>在<code>~/.zshrc</code>中添加<br>
+<code>alias proxy=&quot;source ~/proxy.sh&quot;</code><br>
+刷新环境变量<br>
+<code>source ~/.zshrc</code></p>
+<ul>
+<li>proxy set：开启代理</li>
+<li>proxy unset：关闭代理</li>
+<li>proxy test：查看代理状态</li>
+</ul>
+<h3 id="第五步自动添加代理可选">第五步自动添加代理（可选）</h3>
+<p>在<code>~/.zshrc</code>中加入<code>. ~/proxy.sh set</code></p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/Mac日常使用踩坑记/" class="post-title gt-a-link">
+                    Mac日常使用踩坑记
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

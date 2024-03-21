@@ -1,0 +1,532 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>暗通道先验去雾算法 | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    暗通道先验去雾算法
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-12-01 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/f2h6roHLxO/" class="post-tags">
+                            # matlab
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="快速预览">快速预览</h2>
+<p>暗通道先验去雾算法：</p>
+<ol>
+<li>
+<p><strong>定义暗通道：</strong></p>
+<ul>
+<li>算法的核心是“暗通道先验”，这是一种对天空中任何一幅图像的像素中最小值进行估计的方法。在大多数情况下，天空中的像素值最小，因此通过找到每个窗口中的最小值，可以得到图像的“暗通道”。</li>
+</ul>
+</li>
+<li>
+<p><strong>估计大气光值（A）：</strong></p>
+<ul>
+<li>通过暗通道图像，可以估计图像中的大气光值。这是因为在有雾的地方，像素的值会被雾霾遮挡，而在无雾的地方，像素的值较大。取暗通道图像中前几个最大值作为大气光值的估计。</li>
+</ul>
+</li>
+<li>
+<p><strong>估计透射率（t）：</strong></p>
+<ul>
+<li>利用估计的大气光值，通过一个全局常数 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span> 来估计每个像素的透射率。透射率 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61508em;vertical-align:0em;"></span><span class="mord mathdefault">t</span></span></span></span> 可以通过下面的公式来计算：</li>
+</ul>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><mn>1</mn><mo>−</mo><mi>w</mi><mo>×</mo><mi>m</mi><mi>i</mi><mi>n</mi><mo>(</mo><mi>d</mi><mi>a</mi><mi>r</mi><mi>k</mi><mi>c</mi><mi>h</mi><mi>a</mi><mi>n</mi><mi>n</mi><mi>e</mi><mi>l</mi><mo>(</mo><mi>I</mi><mo>(</mo><mi>x</mi><mo>)</mo><mi mathvariant="normal">/</mi><mi>A</mi><mo>)</mo><mo>)</mo></mrow><annotation encoding="application/x-tex">t(x)=1-w\times min(darkchannel(I(x)/A))
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">t</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">m</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mopen">(</span><span class="mord mathdefault">d</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mord mathdefault">c</span><span class="mord mathdefault">h</span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord mathdefault">n</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mord">/</span><span class="mord mathdefault">A</span><span class="mclose">)</span><span class="mclose">)</span></span></span></span></span></p>
+<ul>
+<li>其中，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>I</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">I(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span></span></span></span> 是原始图像的像素值，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">A</span></span></span></span> 是估计的大气光值。</li>
+</ul>
+</li>
+<li>
+<p><strong>去雾处理：</strong></p>
+<ul>
+<li>利用估计的透射率和大气光值，可以使用下面的公式对图像进行去雾处理：</li>
+</ul>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>J</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><mfrac><mrow><mi>I</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>−</mo><mi>A</mi></mrow><mrow><mi>m</mi><mi>a</mi><mi>x</mi><mo>(</mo><mi>t</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo separator="true">,</mo><msub><mi>t</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mo>)</mo></mrow></mfrac><mo>+</mo><mi>A</mi></mrow><annotation encoding="application/x-tex">J(x)=\frac{I(x)-A}{max(t(x),t_{min})}+A
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.09618em;">J</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.363em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.427em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault">x</span><span class="mopen">(</span><span class="mord mathdefault">t</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">m</span><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">A</span></span></span></span></span></p>
+<ul>
+<li>其中，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>J</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">J(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.09618em;">J</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span></span></span></span> 是去雾后的像素值，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>t</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">t_{min}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.76508em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">m</span><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是一个小的正数，用于避免除零错误。</li>
+</ul>
+</li>
+</ol>
+<h2 id="背景">背景</h2>
+<p>在计算机图形学中，一张有雾图像的合成模型广泛用以下算法表示：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>I</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><mi>J</mi><mo>(</mo><mi>x</mi><mo>)</mo><mi>t</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>+</mo><mi>A</mi><mo>(</mo><mn>1</mn><mo>−</mo><mi>t</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>)</mo></mrow><annotation encoding="application/x-tex">I(x)=J(x)t(x)+A(1-t(x))
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.09618em;">J</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mord mathdefault">t</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">A</span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">t</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mclose">)</span></span></span></span></span></p>
+<p>其中，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>I</mi></mrow><annotation encoding="application/x-tex">I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span></span></span></span> 表示观察（有雾）图像，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.09618em;">J</span></span></span></span> 表示清晰（无雾）图像，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">A</span></span></span></span> 代表大气光，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61508em;vertical-align:0em;"></span><span class="mord mathdefault">t</span></span></span></span> 表示大气的透射率。</p>
+<p>已知有雾图像 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>I</mi></mrow><annotation encoding="application/x-tex">I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span></span></span></span> ，只要求出透射率 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61508em;vertical-align:0em;"></span><span class="mord mathdefault">t</span></span></span></span> 以及大气光 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">A</span></span></span></span> ，那么就可以利用公式 (1) 计算无雾的图像 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.09618em;">J</span></span></span></span> 。</p>
+<h2 id="暗通道先验">暗通道先验</h2>
+<p>要想求得大气透射率 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61508em;vertical-align:0em;"></span><span class="mord mathdefault">t</span></span></span></span> 与大气光强 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">A</span></span></span></span> ， 首先需要有一个基于统计的先验条件：</p>
+<blockquote>
+<p>In most of the non-sky patches, at least one color channel has very low intensity at some pixels. In other words, the minimum intensity in such a patch should has a very low value.</p>
+</blockquote>
+<p>我们定义：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>J</mi><mrow><mi>d</mi><mi>a</mi><mi>r</mi><mi>k</mi></mrow></msup><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><munder><mi>min</mi><mo>⁡</mo><mrow><mi>c</mi><mo>∈</mo><mo>{</mo><mi>r</mi><mo separator="true">,</mo><mi>g</mi><mo separator="true">,</mo><mi>b</mi><mo>}</mo></mrow></munder><mo>(</mo><munder><mi>min</mi><mo>⁡</mo><mrow><mi>y</mi><mo>∈</mo><mi mathvariant="normal">Ω</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow></munder><msup><mi>J</mi><mi>c</mi></msup><mo>(</mo><mi>y</mi><mo>)</mo><mo>)</mo></mrow><annotation encoding="application/x-tex">J^{dark}(x)=\min_{c\in\{r,g,b\}}(\min_{y\in\Omega(x)}J^c(y))
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.149108em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.09618em;">J</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991079999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">d</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span></span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.716em;vertical-align:-0.966em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.66786em;"><span style="top:-2.009em;margin-left:0em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mrel mtight">∈</span><span class="mopen mtight">{</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight">b</span><span class="mclose mtight">}</span></span></span></span><span style="top:-2.7em;"><span class="pstrut" style="height:2.7em;"></span><span><span class="mop">min</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.966em;"><span></span></span></span></span></span><span class="mopen">(</span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.66786em;"><span style="top:-2.009em;margin-left:0em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span><span class="mrel mtight">∈</span><span class="mord mtight">Ω</span><span class="mopen mtight">(</span><span class="mord mathdefault mtight">x</span><span class="mclose mtight">)</span></span></span></span><span style="top:-2.7em;"><span class="pstrut" style="height:2.7em;"></span><span><span class="mop">min</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.966em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.09618em;">J</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7143919999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">c</span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mclose">)</span></span></span></span></span></p>
+<p>其中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>J</mi><mi>c</mi></msup></mrow><annotation encoding="application/x-tex">J^c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.09618em;">J</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">c</span></span></span></span></span></span></span></span></span></span></span> 是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.09618em;">J</span></span></span></span> 图像的一个颜色通道， 是一块以 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span> 为中心的区域点的集合，根据上述的先验条件，天空区域除外，一张自然图像的暗通道总是非常低甚至趋于零，即$ J^{dark}(x) \to 0$</p>
+<pre><code class="language-matlab">% 设置参数
+win_size = 15; % 窗口大小
+W = 0.95; % 权重参数
+t0 = 0.1; % 阈值
+l = 10^-4; % 正则化参数
+
+% 读取图像并显示
+image = double(imread('foggy.jpg'))/255;
+figure('name', 'foggy.jpg'); 
+imshow(image);
+
+% 计算图像的暗通道先验
+Jdark = get_dark_channel(image, win_size);
+
+% 估计透射率的初始值
+Atom  = get_atomsphere(image, Jdark); 
+
+% 利用透射率的初始值计算透射率
+t = 1 - W * get_dark_channel(image ./ Atom, win_size);
+
+% 使用软饱和度方法估计最终的透射率
+trans_est = softmatting(image, t, l);
+figure('name', 't'); 
+imshow(trans_est);
+
+% 对估计的透射率进行限制，防止出现过大的值
+max_trans_est = repmat(max(trans_est, 0.1), [1, 1, 3]);
+
+% 恢复图像
+result = ((image - Atom)./max_trans_est) + Atom;
+
+% 显示恢复的图像
+figure('name', 'foggy_recover.jpg'); 
+imshow(result);
+</code></pre>
+<pre><code class="language-matlab">function Jdark = get_dark_channel(image, win_size)
+% GET_DARK_CHANNEL 计算图像的暗通道先验
+%   Jdark = GET_DARK_CHANNEL(image, win_size) 返回输入图像的暗通道先验。
+%
+%   参数说明：
+%       - image: 输入图像（RGB格式，范围[0, 1]）
+%       - win_size: 滑动窗口的大小
+
+% 获取图像的尺寸
+[m, n, ~] = size(image);
+
+% 分离图像通道
+Ir = image(:, :, 1);
+Ig = image(:, :, 2);
+Ib = image(:, :, 3);
+
+% 创建零填充矩阵
+Irr = 1./zeros(m + (win_size-1), n + (win_size-1));
+Igg = 1./zeros(m + (win_size-1), n + (win_size-1));
+Ibb = 1./zeros(m + (win_size-1), n + (win_size-1));
+
+% 将图像通道复制到零填充矩阵中
+radius_size = floor(win_size / 2);
+Irr(radius_size : (m + radius_size-1), radius_size :(n + radius_size-1)) = Ir;
+Igg(radius_size : (m + radius_size-1), radius_size :(n + radius_size-1)) = Ig;
+Ibb(radius_size : (m + radius_size-1), radius_size :(n + radius_size-1)) = Ib;
+
+% 初始化暗通道矩阵
+Jdark = zeros(m, n);
+
+% 计算每个像素位置的暗通道值
+for i = 1 : 1 : m
+    for j = 1 : 1 : n
+        % 在滑动窗口内找到每个通道的最小值
+        Rmin = min(min(Irr(i : i + (win_size-1), j : j + (win_size-1))));
+        Gmin = min(min(Igg(i : i + (win_size-1), j : j + (win_size-1))));
+        Bmin = min(min(Ibb(i : i + (win_size-1), j : j + (win_size-1))));
+        
+        % 选择三个通道的最小值作为暗通道值
+        Jdark(i,j) = min(min(Rmin, Gmin), Bmin);
+    end
+end
+
+% 显示计算得到的暗通道图像
+figure('name', '暗通道图像');
+imshow(Jdark);
+
+end
+</code></pre>
+<pre><code class="language-matlab">function Atomsphere = get_atomsphere(image, dark_channel)
+% GET_ATOMSPHERE 通过暗通道先验选择图像中的大气光强度值
+%   Atomsphere = GET_ATOMSPHERE(image, dark_channel) 返回选择的大气光强度值。
+%
+%   参数说明：
+%       - image: 输入图像（RGB格式，范围[0, 1]）
+%       - dark_channel: 输入图像的暗通道先验
+
+[m, n, ~] = size(image);
+
+% 计算总像素数
+pixels_num = m * n;
+
+% 选择像素数目的百分比（0.1%）
+select_pixel_num = floor(pixels_num * 0.0001);
+
+% 初始化存储最大像素值的数组
+max_pix = [0, 0];
+
+% 在暗通道中寻找最大值的像素坐标
+for i = 1 : 1 : select_pixel_num
+    MaxValue = max(max(dark_channel));
+    [x, y] = find(dark_channel == MaxValue);
+    dark_channel(dark_channel == MaxValue) = 0; % 将找到的最大值置零，以寻找其他适当值
+    max_pix = vertcat(max_pix, [x, y]);
+    
+    num = length(max_pix);
+    if num &gt; select_pixel_num
+        break;
+    end
+end
+
+% 取得选择像素数目个适当值，去除初始值及超出个数的值
+Max_Pix = max_pix(2 : select_pixel_num + 1, :);
+
+% 初始化 RGB 通道的和
+Rsum = 0; Jr = image(:,:,1);
+Gsum = 0; Jg = image(:,:,2);
+Bsum = 0; Jb = image(:,:,3);
+
+% 计算选择像素位置的 RGB 通道和
+for i = 1 : 1 : select_pixel_num
+    Rsum = Rsum + Jr(Max_Pix(i, 1), Max_Pix(i, 2));
+    Gsum = Gsum + Jg(Max_Pix(i, 1), Max_Pix(i, 2));
+    Bsum = Bsum + Jb(Max_Pix(i, 1), Max_Pix(i, 2));
+end
+
+% 计算 RGB 通道的平均值
+sum = [Rsum/select_pixel_num, Gsum/select_pixel_num, Bsum/select_pixel_num];
+
+% 生成大气光强度矩阵
+Atomsphere = repmat(reshape(sum, [1, 1, 3]), m, n);
+
+end
+</code></pre>
+<pre><code class="language-matlab">function result = softmatting(image, t, lambda)
+% SOFTMATTING 利用软饱和度方法进行图像细节增强
+%   result = SOFTMATTING(image, t, lambda) 返回通过软饱和度方法增强后的图像。
+%
+%   参数说明：
+%       - image: 输入图像（RGB格式，范围[0, 1]）
+%       - t: 输入图像的透射率
+%       - lambda: 正则化参数
+
+[m, n, ~] = size(image);
+
+% 计算拉普拉斯矩阵
+L = get_laplacian(image);
+
+% 构建线性方程组 Ax = b，其中 A = L + lambda * I
+A = L + lambda * speye(size(L));
+
+% 构建右侧向量 b = lambda * t(:)
+b = lambda * t(:);
+
+% 解线性方程组 Ax = b
+x = A \ b;
+
+% 将结果reshape为图像大小
+result = reshape(x, m, n);
+
+end
+</code></pre>
+<pre><code class="language-matlab">function [L] = get_laplacian(image)
+% GET_LAPLACIAN 计算图像的拉普拉斯矩阵
+%   L = GET_LAPLACIAN(image) 返回图像的拉普拉斯矩阵。
+%
+%   参数说明：
+%       - image: 输入图像（RGB格式）
+
+[m, n, c] = size(image);
+
+img_size = m * n;
+
+win_rad = 1; % 窗口半径
+epsilon = 0.0000001; % 防止除零错误的小值
+
+max_num_neigh = (win_rad * 2 + 1)^2; % 邻域中像素的最大数量
+
+ind_mat = reshape(1:img_size, m, n);
+
+indices = 1 : (m * n);
+
+num_ind = length(indices); % 像素总数
+
+max_num_vertex = max_num_neigh * num_ind;
+
+% 初始化稀疏矩阵的行、列、值
+row_inds = zeros(max_num_vertex, 1);
+col_inds = zeros(max_num_vertex, 1);
+vals = zeros(max_num_vertex, 1);
+
+len = 0;
+
+% 遍历每个像素
+for k = 1 : length(indices)
+    
+    ind = indices(k);
+    
+    [i, j] = ind2sub([m n], ind);  % 将线性索引转换为二维坐标
+    
+    m_min = max(1, i - win_rad);
+    m_max = min(m, i + win_rad);
+    n_min = max(1, j - win_rad);
+    n_max = min(n, j + win_rad);
+    
+    win_inds = ind_mat(m_min : m_max, n_min : n_max);
+    win_inds = win_inds(:);
+    
+    num_neigh = size(win_inds, 1); % 邻域中像素的数量
+    
+    win_image = image(m_min : m_max, n_min : n_max, :);
+    win_image = reshape(win_image, num_neigh, c);
+    
+    win_mean = mean(win_image, 1); % 计算均值
+    
+    % 计算方差的逆矩阵（式(15)），防止除零错误
+    win_var = inv((win_image' * win_image / num_neigh) - (win_mean' * win_mean) + (epsilon / num_neigh * eye(c)));
+    
+    win_image = win_image - repmat(win_mean, num_neigh, 1);
+    
+    win_vals = (1 + win_image * win_var * win_image') / num_neigh;
+    
+    sub_len = num_neigh * num_neigh;
+    
+    win_inds = repmat(win_inds, 1, num_neigh);
+    
+    row_inds(1+len: len+sub_len) = win_inds(:);
+    
+    win_inds = win_inds';
+    
+    col_inds(1+len: len+sub_len) = win_inds(:);
+    
+    vals(1+len: len+sub_len) = win_vals(:);
+    
+    len = len + sub_len;
+    
+end
+
+% 构建稀疏矩阵 A
+A = sparse(row_inds(1:len), col_inds(1:len), vals(1:len), img_size, img_size);
+
+% 计算度矩阵 D
+D = spdiags(sum(A, 2), 0, n * m, n * m);
+
+% 计算拉普拉斯矩阵 L
+L = D - A;
+
+end
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/优惠券收集问题/" class="post-title gt-a-link">
+                    优惠券收集问题
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

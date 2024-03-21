@@ -1,0 +1,338 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Fortran气象信息系统工程 | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Fortran气象信息系统工程
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2024-03-09 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/5hLLI7j40/" class="post-tags">
+                            # fortran
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <blockquote>
+<p>不会吧😧，不会吧😧，都4022年了还有人学fortran</p>
+</blockquote>
+<h2 id="fortran-基本数据类型">Fortran 基本数据类型</h2>
+<figure data-type="image" tabindex="1"><img src="https://flowus.cn/preview/6e5ec31f-3101-424f-b531-0bea64b382f1" alt="image.png" loading="lazy"></figure>
+<h3 id="字符集与保留字">字符集与保留字</h3>
+<figure data-type="image" tabindex="2"><img src="https://flowus.cn/preview/dc8b9416-96bb-44a6-875a-81cb4935d11e" alt="image.png" loading="lazy"></figure>
+<ul>
+<li>
+<p>语句关键字：PROGRAM、INTEGER、REAL、READ、PRINT、WRITE、DO、END、SUBROUTINE、FUNCTION等</p>
+</li>
+<li>
+<p>内部函数名：ABS、SIN、LOG</p>
+</li>
+</ul>
+<h3 id="数据类型">数据类型</h3>
+<figure data-type="image" tabindex="3"><img src="https://flowus.cn/preview/2eb98f6a-97a4-4f86-82b1-907f9cc2a100" alt="image.png" loading="lazy"></figure>
+<ul>
+<li>数据类型四个性质<br>
+每个数据类型有一个<strong>唯一的名称</strong>；<br>
+每个数据类型规定了一个<strong>取值范围</strong>（值的集合)<br>
+每个数据类型规定了其常量数据的<strong>表示方法</strong>；<br>
+每个数据类型规定了一组操作。</li>
+</ul>
+<h3 id="常量">常量</h3>
+<pre><code class="language-Fortran">PROGRAM ex05_01
+  IMPLICIT NONE
+  REAL pi !声明定义pi类型时实型
+  PARAMETER(pi=3.1415926)
+  WRITE(*,*)sin(pi/6)
+  END
+</code></pre>
+<h3 id="变量">变量</h3>
+<ul>
+<li>
+<p>整形变量 integer</p>
+</li>
+<li>
+<p>实型变量 real</p>
+</li>
+<li>
+<p>复型变量 complex</p>
+</li>
+<li>
+<p>字符型变量 character</p>
+</li>
+<li>
+<p>逻辑型变量 logical</p>
+</li>
+</ul>
+<p>变量类型声明语句的格式：</p>
+<p><strong>类型说明</strong>[(种别说明)][,属性说明类]::<strong>变量名表</strong>[=初值]</p>
+<p>种别说明：变量所占用的字节数。例如：integer(8) a</p>
+<pre><code class="language-Fortran">integer f !缺省KIND=4
+integer::g = 10
+</code></pre>
+<pre><code class="language-Fortran">real f
+real::g = 1.23
+!若KIND=8，可以由DOUBLE PRECISION声明取代
+</code></pre>
+<pre><code class="language-Fortran">complex f
+complex::g = (3,4)
+</code></pre>
+<pre><code class="language-Fortran">character f
+character::g = 'A'
+</code></pre>
+<pre><code class="language-Fortran">logical f
+logical::g = .TRUE.
+</code></pre>
+<pre><code class="language-Fortran">program ex05_03
+  integer::a = 1
+  real::b = 2.0
+  complex::c = (1.0, 2.0)
+  character(len=10)::string = &quot;FORTRAN&quot;
+  write(*,*) a,b,c,string
+end
+</code></pre>
+<pre><code class="language-Fortran">program ex05_04
+  integer a
+  real b
+  complex c
+  character(len=10) string
+  data a, b, c, string / 1, 2.0, (1.0, 2.0), &quot;FORTRAN&quot; /
+  write(*,*) a, b, c, string
+ end
+</code></pre>
+<h2 id="运算符与表达式及语句">运算符与表达式及语句</h2>
+<h3 id="逻辑符与表达式">逻辑符与表达式</h3>
+<figure data-type="image" tabindex="4"><img src="https://flowus.cn/preview/e8557a36-6fa6-40d6-88b2-8758809bedff" alt="image.png" loading="lazy"></figure>
+<figure data-type="image" tabindex="5"><img src="https://flowus.cn/preview/f100a40e-7742-4c05-b2e0-927f517e4c69" alt="image.png" loading="lazy"></figure>
+<figure data-type="image" tabindex="6"><img src="https://flowus.cn/preview/ed1bdcd0-07b5-4aec-91bc-913e05fd89d5" alt="image.png" loading="lazy"></figure>
+<h3 id="语句和内部函数">语句和内部函数</h3>
+<figure data-type="image" tabindex="7"><img src="https://flowus.cn/preview/5fb8a756-467b-4cc6-84df-0034edb95555" alt="image.png" loading="lazy"></figure>
+<pre><code class="language-Fortran">program ex02_02
+    implicit none
+    character mo*2
+    mo = '1'
+    print *, mo, '月'
+    print *, trim(mo), '月'
+end
+</code></pre>
+<figure data-type="image" tabindex="8"><img src="https://flowus.cn/preview/2f343ca9-8d4a-4df6-bbbb-9317c71413cd" alt="image.png" loading="lazy"></figure>
+<pre><code class="language-Fortran">program main
+    implicit none
+    real::E0, E1, E2, t
+    parameter E0 = 6.11
+    print *, &quot;请输入t的值&quot;
+    read *, t
+    E1 = E0 * 10**(7.45*t/(237.3+t))
+    E2 = E0 * exp(17.67*t/(243.5+t))
+    print *, &quot;由E1计算：&quot;, E1, &quot;由E2计算&quot;, E2
+end
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/Coggle竞赛学习：动手学RAG/" class="post-title gt-a-link">
+                    Coggle 24/1月竞赛学习：动手学RAG
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

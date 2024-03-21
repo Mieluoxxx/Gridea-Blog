@@ -1,0 +1,7128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://lab.moguw.top</id>
+    <title>咕噜咕噜魔法使</title>
+    <updated>2024-03-21T13:30:39.003Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://lab.moguw.top"/>
+    <link rel="self" href="https://lab.moguw.top/atom.xml"/>
+    <subtitle>真真夜夜的小木屋</subtitle>
+    <logo>https://lab.moguw.top/images/avatar.png</logo>
+    <icon>https://lab.moguw.top/favicon.ico</icon>
+    <rights>All rights reserved 2024, 咕噜咕噜魔法使</rights>
+    <entry>
+        <title type="html"><![CDATA[KMP算法]]></title>
+        <id>https://lab.moguw.top/post/KMP算法/</id>
+        <link href="https://lab.moguw.top/post/KMP算法/">
+        </link>
+        <updated>2025-03-21T11:28:37.000Z</updated>
+        <content type="html"><![CDATA[<p>对于字符串“abababca”，它的next如下表所示：</p>
+<figure data-type="image" tabindex="1"><img src="https://s2.loli.net/2023/11/16/zxAe9q4uGwP3ndO.png" alt="图片.png" loading="lazy"></figure>
+<pre><code class="language-c++">void get_next(SString T, int* next) {
+    int i = 1, j = 0;
+    next[1] = 0;    // next[1]的值总是0
+    while (i &lt; T.length) { 
+        if (j == 0 || T.ch[i] == T.ch[j]) { // 如果j处于0位或者，俩字符相等
+            ++i; ++j;   // 继续比较后继字符
+            next[i] = j;    // 当前的j就是next的值
+        } else {
+            j = next[j];    // 若字符不相等，则j利用next[j]进行回溯
+        }
+    }
+}
+</code></pre>
+<p>考试手算：前缀后缀匹配</p>
+<p>算法简单的语言描述一下：</p>
+<ol>
+<li>当我们在做KMP算法时，会设置两个指针，i和j。i初始值位1，j初始值位0。</li>
+<li>在KMP算法中，i在算法过程中不会减小且next[1] = 0。</li>
+<li>当j = 0 或者 两个比较的字符相同时，跳过，++i，++j，且此时next[i]的值恰好为j。</li>
+<li>当两个字符不同时，i不发生变化，j回溯到next[j]的位置。</li>
+</ol>
+<p>对于字符串“ababaa”，它的next如下表所示：<br>
+<img src="https://lab.moguw.top/post-images/1711027392773.png" alt="" loading="lazy"></p>
+<pre><code class="language-cpp">void get_nextval(SString T, int nextval[]) {
+    int i = 1, j = 0;
+    nextval[1] = 0;
+    while(i &lt; T.length) {
+        if(j==0 || T.ch[i] == T.ch[j]) {
+            ++i; ++j;
+            if (T.ch[i] != T.ch[j]) nextval[i] = j;
+            else nextval[i] = nextval[j];
+        }
+        else {
+            j = nextval[j];
+        }
+    }
+}
+</code></pre>
+<p>nextval数组解决了，j回溯之后仍然字符不相等的漏洞<br>
+考试手算：先求next数组，再求nextval数组</p>
+<p>算法简单理解：其实就多了一个检查是否回溯之后仍然无效</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[动手学数据分析（四）数据可视化]]></title>
+        <id>https://lab.moguw.top/post/hands-on-data-analysis-4/</id>
+        <link href="https://lab.moguw.top/post/hands-on-data-analysis-4/">
+        </link>
+        <updated>2024-03-18T14:18:23.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-python"># 导入基本库
+import numpy as np
+import pandas as pd
+</code></pre>
+<pre><code class="language-python">df = pd.read_csv('/kaggle/working/train_base.csv')
+</code></pre>
+<pre><code class="language-python">df['性别值'] = df['性别'].map({'male': 1, 'female': 2})
+df['登船港口'] = df['登船港口_labelEncode']
+df.drop('登船港口_labelEncode', axis=1, inplace=True)
+df['船票信息'] = df['船票信息_labelEncode']
+df.drop('船票信息_labelEncode', axis=1, inplace=True)
+df['年龄'] = df['年龄段']
+df.drop('年龄段', axis=1, inplace=True)
+df['性别'] = df['性别值']
+df.drop('性别值', axis=1, inplace=True)
+</code></pre>
+<pre><code class="language-python">print(df.columns)
+</code></pre>
+<pre><code>Index(['乘客ID', '是否幸存', '仓位等级', '姓名', '性别', '年龄', '兄弟姐妹个数', '父母子女个数', '船票信息',
+       '票价', '客舱', '登船港口'],
+      dtype='object')
+</code></pre>
+<pre><code class="language-python"># 定义要保留的列名称
+left_columns = ['乘客ID', '是否幸存', '仓位等级', '姓名']
+# 选择这些列创建train_left
+train_left = df[left_columns]
+# 剩下的列将自动被分配到train_right
+train_right = df.drop(left_columns, axis=1)
+</code></pre>
+<pre><code class="language-python">train_right
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2.0</td>
+      <td>4.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>41</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>374</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>710</th>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>0</td>
+      <td>5</td>
+      <td>378</td>
+      <td>29.1250</td>
+      <td>NaN</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>711</th>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>84</td>
+      <td>13.0000</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>712</th>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>13</td>
+      <td>30.0000</td>
+      <td>B42</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>713</th>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>9</td>
+      <td>30.0000</td>
+      <td>C148</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>714</th>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>372</td>
+      <td>7.7500</td>
+      <td>NaN</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+<p>715 rows × 8 columns</p>
+</div>
+<pre><code class="language-python">split_index = train_left.shape[0] // 2
+# 获取左/右上部分的DataFrame
+train_left_up = train_left.iloc[:split_index]
+train_right_up = train_right.iloc[:split_index]
+
+# 获取左/右下部分的DataFrame
+train_left_down = train_left.iloc[split_index:]
+train_right_down = train_right.iloc[split_index:]
+
+train_left_up.to_csv('/kaggle/working/train_left_up.csv')
+train_right_up.to_csv('/kaggle/working/train_right_up.csv')
+train_left_down.to_csv('/kaggle/working/train_left_down.csv')
+train_right_down.to_csv('/kaggle/working/train_right_down.csv')
+</code></pre>
+<pre><code class="language-python"># 使用concat方法：将数据train-left-up.csv和train-right-up.csv横向合并为一张表，并保存这张表为result_up
+list_up = [train_left_up,train_right_up]
+result_up = pd.concat(list_up,axis=1)
+result_up.head(-4)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>2.0</td>
+      <td>4.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>41</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>374</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>348</th>
+      <td>435</td>
+      <td>0</td>
+      <td>1</td>
+      <td>Silvey, Mr. William Baird</td>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>62</td>
+      <td>55.9000</td>
+      <td>E44</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>349</th>
+      <td>436</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Carter, Miss. Lucile Polk</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>2</td>
+      <td>27</td>
+      <td>120.0000</td>
+      <td>B96 B98</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>350</th>
+      <td>437</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Ford, Miss. Doolina Margaret "Daisy"</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>539</td>
+      <td>34.3750</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>351</th>
+      <td>438</td>
+      <td>1</td>
+      <td>2</td>
+      <td>Richards, Mrs. Sidney (Emily Hocking)</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>2</td>
+      <td>3</td>
+      <td>197</td>
+      <td>18.7500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>352</th>
+      <td>439</td>
+      <td>0</td>
+      <td>1</td>
+      <td>Fortune, Mr. Mark</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>1</td>
+      <td>4</td>
+      <td>79</td>
+      <td>263.0000</td>
+      <td>C23 C25 C27</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+<p>353 rows × 12 columns</p>
+</div>
+<pre><code class="language-python"># 使用concat方法：将train-left-down和train-right-down横向合并为一张表，并保存这张表为result_down。然后将上边的result_up和result_down纵向合并为result
+list_down = [train_left_down,train_right_down]
+result_down = pd.concat(list_down, axis=1)
+result_down.head(-4)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>357</th>
+      <td>444</td>
+      <td>1</td>
+      <td>2</td>
+      <td>Reynaldo, Ms. Encarnacion</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>98</td>
+      <td>13.0000</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>358</th>
+      <td>446</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Dodge, Master. Washington</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0</td>
+      <td>2</td>
+      <td>234</td>
+      <td>81.8583</td>
+      <td>A34</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>359</th>
+      <td>447</td>
+      <td>1</td>
+      <td>2</td>
+      <td>Mellinger, Miss. Madeleine Violet</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>139</td>
+      <td>19.5000</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>360</th>
+      <td>448</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Seward, Mr. Frederic Kimber</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>38</td>
+      <td>26.5500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>361</th>
+      <td>449</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Baclini, Miss. Marie Catherine</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>2</td>
+      <td>1</td>
+      <td>161</td>
+      <td>19.2583</td>
+      <td>NaN</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>706</th>
+      <td>882</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Markun, Mr. Johann</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>321</td>
+      <td>7.8958</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>707</th>
+      <td>883</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Dahlberg, Miss. Gerda Ulrika</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>397</td>
+      <td>10.5167</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>708</th>
+      <td>884</td>
+      <td>0</td>
+      <td>2</td>
+      <td>Banfield, Mr. Frederick James</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>446</td>
+      <td>10.5000</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>709</th>
+      <td>885</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Sutehall, Mr. Henry Jr</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>516</td>
+      <td>7.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>710</th>
+      <td>886</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Rice, Mrs. William (Margaret Norton)</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>0</td>
+      <td>5</td>
+      <td>378</td>
+      <td>29.1250</td>
+      <td>NaN</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+<p>354 rows × 12 columns</p>
+</div>
+<pre><code class="language-python">result_up.shape, result_down.shape
+</code></pre>
+<pre><code>((357, 12), (358, 12))
+</code></pre>
+<pre><code class="language-python">result = pd.concat([result_up,result_down])
+result.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>2.0</td>
+      <td>4.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>41</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>374</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">result.to_csv('/kaggle/working/result.csv', index=False)
+</code></pre>
+<pre><code class="language-python"># 将完整的数据加载出来
+text = pd.read_csv('/kaggle/working/result.csv')
+text.head()
+# 代码写在这里
+unit_result=text.stack().head(20)
+unit_result.head()
+</code></pre>
+<pre><code>0  乘客ID                          1
+   是否幸存                          0
+   仓位等级                          3
+   姓名      Braund, Mr. Owen Harris
+   性别                          1.0
+dtype: object
+</code></pre>
+<pre><code class="language-python">unit_result.shape
+</code></pre>
+<pre><code>(20,)
+</code></pre>
+<pre><code class="language-python">unit_result.to_csv('/kaggle/working/unit_result.csv')
+test = pd.read_csv('/kaggle/working/unit_result.csv')
+test.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>Unnamed: 1</th>
+      <th>0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>乘客ID</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>是否幸存</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>仓位等级</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>姓名</td>
+      <td>Braund, Mr. Owen Harris</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>性别</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3 id="数据聚合与运算">数据聚合与运算</h3>
+<pre><code class="language-python">text = pd.read_csv('/kaggle/working/result.csv')
+text.head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">text['是否幸存'].sum()
+</code></pre>
+<pre><code>290
+</code></pre>
+<pre><code class="language-python"># 计算泰坦尼克号男性与女性的平均票价
+df = text['票价'].groupby(text['性别'])
+means = df.mean()
+means
+</code></pre>
+<pre><code>性别
+1.0    27.268836
+2.0    47.582759
+Name: 票价, dtype: float64
+</code></pre>
+<pre><code class="language-python"># 统计泰坦尼克号中男女的存活人数
+survived_sex = text['是否幸存'].groupby(text['性别']).sum()
+survived_sex.head()
+</code></pre>
+<pre><code>性别
+1.0     93
+2.0    197
+Name: 是否幸存, dtype: int64
+</code></pre>
+<pre><code class="language-python">text['是否幸存'].sum()
+</code></pre>
+<pre><code>290
+</code></pre>
+<pre><code class="language-python">survived_pclass = text['是否幸存'].groupby(text['仓位等级'])
+survived_pclass.sum()
+</code></pre>
+<pre><code>仓位等级
+0      0
+1    122
+2     83
+3     85
+Name: 是否幸存, dtype: int64
+</code></pre>
+<pre><code class="language-python">text.groupby('性别').agg({'票价': 'mean', '仓位等级': 'count'}).rename(columns=
+                            {'票价': 'mean_fare', '仓位等级': 'count_pclass'})
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mean_fare</th>
+      <th>count_pclass</th>
+    </tr>
+    <tr>
+      <th>性别</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1.0</th>
+      <td>27.268836</td>
+      <td>453</td>
+    </tr>
+    <tr>
+      <th>2.0</th>
+      <td>47.582759</td>
+      <td>261</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 统计在不同等级的票中的不同年龄的船票花费的平均值
+text.groupby(['票价','年龄'])['票价'].mean().head(3)
+</code></pre>
+<pre><code>票价   年龄 
+0.0  1.0    0.0
+     2.0    0.0
+     3.0    0.0
+Name: 票价, dtype: float64
+</code></pre>
+<pre><code class="language-python">result = pd.merge(means,survived_sex,on='性别')
+result
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>票价</th>
+      <th>是否幸存</th>
+    </tr>
+    <tr>
+      <th>性别</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1.0</th>
+      <td>27.268836</td>
+      <td>93</td>
+    </tr>
+    <tr>
+      <th>2.0</th>
+      <td>47.582759</td>
+      <td>197</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">result.to_csv('/kaggle/working/sex_fare_survived.csv')
+</code></pre>
+<pre><code class="language-python"># 得出不同年龄的总的存活人数，然后找出存活人数最多的年龄段，最后计算存活人数最高的存活率（存活人数/总人数）
+#不同年龄的存活人数
+survived_age = text['是否幸存'].groupby(text['年龄']).sum()
+survived_age.head()
+</code></pre>
+<pre><code>年龄
+1.0    42
+2.0    56
+3.0    50
+4.0    70
+5.0    50
+Name: 是否幸存, dtype: int64
+</code></pre>
+<pre><code class="language-python">#找出最大值的年龄段
+survived_age[survived_age.values==survived_age.max()]
+</code></pre>
+<pre><code>年龄
+4.0    70
+Name: 是否幸存, dtype: int64
+</code></pre>
+<pre><code class="language-python">_sum = text['是否幸存'].sum()
+print(_sum)
+</code></pre>
+<pre><code>290
+</code></pre>
+<pre><code class="language-python"># 首先计算总人数
+_sum = text['是否幸存'].sum()
+print(&quot;sum of person:&quot;+str(_sum))
+precetn =survived_age.max()/_sum
+print(&quot;最大存活率：&quot;+str(precetn))
+</code></pre>
+<pre><code>sum of person:290
+最大存活率：0.2413793103448276
+</code></pre>
+<pre><code class="language-python">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+</code></pre>
+<pre><code class="language-python">text = pd.read_csv('/kaggle/working/result.csv')
+text.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>2.0</td>
+      <td>4.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>41</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>374</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 可视化展示泰坦尼克号数据集中男女中生存人数分布情况
+sex = text.groupby('性别')['是否幸存'].sum()
+sex.plot.bar()
+plt.title('survived_count')
+plt.show()
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_89_0.png" alt="png" loading="lazy"><br>
+​</p>
+<pre><code class="language-python"># 可视化展示泰坦尼克号数据集中男女中生存人与死亡人数的比例图
+text.groupby(['性别','是否幸存'])['是否幸存'].count().unstack().plot(kind='bar',stacked='True')
+plt.title('survived_count')
+plt.ylabel('count')
+</code></pre>
+<pre><code>Text(0, 0.5, 'count')
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_90_1.png" alt="png" loading="lazy"><br>
+​</p>
+<pre><code class="language-python"># 计算不同票价中生存与死亡人数 1表示生存，0表示死亡
+fare_sur = text.groupby(['票价'])['是否幸存'].value_counts().sort_values(ascending=False)
+fare_sur
+</code></pre>
+<pre><code>票价       是否幸存
+13.0000  0       26
+8.0500   0       24
+7.8958   0       22
+10.5000  0       15
+13.0000  1       15
+                 ..
+7.7333   1        1
+27.0000  0        1
+         1        1
+27.7208  1        1
+24.0000  1        1
+Name: count, Length: 291, dtype: int64
+</code></pre>
+<pre><code class="language-python"># 排序后绘折线图
+fig = plt.figure(figsize=(20, 18))
+fare_sur.plot(grid=True)
+plt.legend()
+plt.show()
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_92_0.png" alt="png" loading="lazy"><br>
+​</p>
+<pre><code class="language-python"># 排序前绘折线图
+fare_sur1 = text.groupby(['票价'])['是否幸存'].value_counts()
+fare_sur1
+</code></pre>
+<pre><code>票价        是否幸存
+0.0000    0       7
+          1       1
+4.0125    0       1
+5.0000    0       1
+6.2375    0       1
+                 ..
+247.5208  1       1
+262.3750  1       2
+263.0000  0       2
+          1       2
+512.3292  1       3
+Name: count, Length: 291, dtype: int64
+</code></pre>
+<pre><code class="language-python">fig = plt.figure(figsize=(20, 18))
+fare_sur1.plot(grid=True)
+plt.legend()
+plt.show()
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_94_0.png" alt="png" loading="lazy"><br>
+​</p>
+<pre><code class="language-python"># 可视化展示泰坦尼克号数据集中不同仓位等级的人生存和死亡人员的分布情况。
+# 1表示生存，0表示死亡
+pclass_sur = text.groupby(['仓位等级'])['是否幸存'].value_counts()
+pclass_sur
+</code></pre>
+<pre><code>仓位等级  是否幸存
+0     0         1
+1     1       122
+      0        64
+2     0        90
+      1        83
+3     0       270
+      1        85
+Name: count, dtype: int64
+</code></pre>
+<pre><code class="language-python">import seaborn as sns
+sns.countplot(x=&quot;票价&quot;, hue=&quot;是否幸存&quot;, data=text)
+</code></pre>
+<pre><code>&lt;Axes: xlabel='票价', ylabel='count'&gt;
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_96_1.png" alt="png" loading="lazy"><br>
+​</p>
+<pre><code class="language-python"># 任务六：可视化展示泰坦尼克号数据集中不同年龄的人生存与死亡人数分布情况。
+facet = sns.FacetGrid(text, hue=&quot;是否幸存&quot;,aspect=3)
+facet.map(sns.kdeplot,'年龄',shade= True)
+facet.set(xlim=(0, text['年龄'].max()))
+facet.add_legend()
+</code></pre>
+<pre><code>&lt;seaborn.axisgrid.FacetGrid at 0x780204e70040&gt;
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_97_1.png" alt="png" loading="lazy"><br>
+​</p>
+<pre><code class="language-python"># 任务七：可视化展示泰坦尼克号数据集中不同仓位等级的人年龄分布情况。
+
+text['年龄'][text['仓位等级'] == 1].plot(kind='kde')
+text['年龄'][text['仓位等级'] == 2].plot(kind='kde')
+text['年龄'][text['仓位等级'] == 3].plot(kind='kde')
+plt.xlabel(&quot;age&quot;)
+plt.legend((1,2,3),loc=&quot;best&quot;)
+</code></pre>
+<pre><code>&lt;matplotlib.legend.Legend at 0x7802043f9210&gt;
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_98_1.png" alt="png" loading="lazy"><br>
+​</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Rust简易入门（五）Borrowing借用&&Lifetime生命周期]]></title>
+        <id>https://lab.moguw.top/post/rust-base-5/</id>
+        <link href="https://lab.moguw.top/post/rust-base-5/">
+        </link>
+        <updated>2024-03-17T05:47:35.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="borring-borrow-checker-lifetime">Borring &amp;&amp; Borrow Checker &amp;&amp; Lifetime</h2>
+<h3 id="borrowing引用的函数式声明">Borrowing（引用的函数式声明）</h3>
+<p>一个玩意的两种描述</p>
+<p>引用（reference）：</p>
+<ol>
+<li>
+<p>引用是一种变量的别名，通过 &amp; 符号来创建（非所有权）</p>
+</li>
+<li>
+<p>引用可以是不可变的（&amp;T）或可变的（&amp;mut T）</p>
+</li>
+<li>
+<p>引用允许在不传递所有权的情况下访问数据，他们是安全且低开销的</p>
+</li>
+</ol>
+<p>借用（Borrowing）：</p>
+<ol>
+<li>
+<p>借用是通过引用（Reference）来借用（Borrow）数据，从而在一段时间内访问数据而不借用它</p>
+</li>
+<li>
+<p>借用氛围可变借用和不可变借用。可变借用（&amp;mut）允许修改数据，但在生命周期内只能有一个可变借用。不可变借用（&amp;）允许多个同时存在，但不允许修改数据</p>
+</li>
+</ol>
+<h3 id="borrow-checker">Borrow Checker</h3>
+<ol>
+<li>
+<p>不可变引用规则：<br>
+在任何给定的时间，要么有一个可变引用，要么有多个不可变引用，但不能同时存在可变引用与不可变引用。这确保了在同一时间内只有一个地方对数据进行修改，或者有多个地方同时读取数据</p>
+</li>
+<li>
+<p>可变引用规则<br>
+在任何给定的时间，只能有一个可变引用来访问数据。这防止了并发修改相同数据的问题，从而防止数据竞争</p>
+</li>
+<li>
+<p>引用的生命周期必须在被引用的数据有效时间范围内。这防止了悬垂引用，即引用的数据已经被销毁，但引用仍然存在</p>
+</li>
+<li>
+<p>可变引用与不可变引用不互斥<br>
+可以同时存在多个不可变引用，因为不可变引用不会修改数据，不会影响到其他引用。但不可变引用与可变引用之间是互斥的。</p>
+</li>
+</ol>
+<pre><code class="language-Rust">fn main(){
+    let mut s = String::from(&quot;Hello&quot;);
+    
+    let r1 = &amp;s;
+    let r2 = &amp;s;
+    println!(&quot;{} {}&quot;, r1, r2);
+    
+    let r3 = &amp;mut s;
+    println!(&quot;{}&quot;, r3);
+    
+    let result: &amp;str;
+    {
+        // result = &quot;hello&quot;;   // 初始化不影响生命周期
+        let r4 = &amp;s;
+        result = ff(r4);
+        
+    }
+    println!(&quot;{}&quot;, result);
+}
+
+fn ff&lt;'a&gt;(s: &amp;'a str) -&gt; &amp;'a str {
+    s
+}
+</code></pre>
+<h2 id="lifetime-与-函数">Lifetime 与 函数</h2>
+<p>大多数情况下，生命周期是隐式且被推断的</p>
+<p>生命周期的主要目的是防止悬垂引用</p>
+<p>关于&quot;悬垂引用”的概念是指，引用指向的数据在代码结束后被释放，但引用仍然存在。生命周期的引入有助于确保引用的有效性，防止程序在运行时出现悬垂引用的情况。通过生命周期的推断，Rust能够在编译时检查代码，确保引用的有效性而不是在运行时出现悬垂引用的错误。</p>
+<p>编译器在没有显式注解的情况下，使用三个规则来推断这些生命周期：</p>
+<ol>
+<li>
+<p>第一个规则是每个作为引用的参数都会得到它自己的生命周期参数。</p>
+</li>
+<li>
+<p>第二个规则是，如果只有一个输入生命周期参数，那么该生命周期将被分配给所有输出生命周期参数（该生命周期将分配给返回值）。</p>
+</li>
+<li>
+<p>第三个规则是，如果有多个输入生命周期参数，但其中一个是对self或不可变se|f的引用时。因为在这种情况下它是一个方法，所以se|f的生命周期被分配给所有输出生命周期 参数</p>
+</li>
+</ol>
+<pre><code class="language-Rust">fn longest&lt;'a&gt;(s1: &amp;'a str, s2: &amp;'a str) -&gt; &amp;'a str {
+    if s1.len() &gt; s2.len() {
+        s1
+    } else {
+        s2
+    }
+}
+
+fn longest_str&lt;'a, 'b, 'out&gt;(s1: &amp;'a str, s2: &amp;'b str) -&gt; &amp;'out str 
+where 
+    'a : 'out,
+    'b : 'out,
+{
+    if s1.len() &gt; s2.len() {
+        s1
+    } else {
+        s2
+    }
+}
+
+fn no_need(s: &amp;'static str, s1: &amp;str) -&gt; &amp;'static str{
+    s
+}
+
+fn main(){
+    println!(&quot;no need {}&quot;, no_need(&quot;hh&quot;, &quot;nn&quot;));
+    
+    let s1 = &quot;hello world&quot;;
+    let s2 = &quot;hello&quot;;
+    println!(&quot;longest {}&quot;, longest(s1, s2));
+}
+</code></pre>
+<h2 id="lifetime-与-struct">Lifetime 与 Struct</h2>
+<p><strong>结构体的引用</strong></p>
+<ul>
+<li>
+<p>在结构体中的引用需要标注生命周期</p>
+</li>
+<li>
+<p>结构体的方法（&amp;self等）不需要标注生命周期</p>
+</li>
+</ul>
+<pre><code class="language-Rust">struct MyStruct&lt;'a&gt;{
+    text: &amp;'a str,
+}
+
+impl&lt;'a&gt; MyStruct&lt;'a&gt;{
+    fn get_length(&amp;self) -&gt; usize{
+        self.text.len()
+    }
+    fn modify_data(&amp;mut self) {
+        self.text = &quot;world2&quot;;
+    }
+}
+
+struct StringHolder{
+    data: String,
+}
+
+impl StringHolder{
+    fn get_length(&amp;self) -&gt; usize{
+        self.data.len()
+    }
+    fn get_reference&lt;'a&gt;(&amp;'a self) -&gt; &amp;'a String{
+        &amp;self.data
+    }
+    fn get_ref(&amp;self) -&gt; &amp;String{
+        &amp;self.data
+    }
+}
+
+fn main(){
+    let str1 = String::from(&quot;hello&quot;);
+    let mut x = MyStruct{
+        text: str1.as_str(),
+    };
+    
+    x.modify_data();
+    println!(&quot;{}&quot;, x.get_length());
+    
+    
+    let y = StringHolder{
+        data: &quot;hello&quot;.to_owned(),
+    };
+    println!(&quot;{}&quot;,y.get_reference());
+    println!(&quot;{}&quot;,y.get_ref());
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[动手学数据分析（三）数据重构]]></title>
+        <id>https://lab.moguw.top/post/hands-on-data-analysis-3/</id>
+        <link href="https://lab.moguw.top/post/hands-on-data-analysis-3/">
+        </link>
+        <updated>2024-03-16T14:08:09.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-python"># 导入基本库
+import numpy as np
+import pandas as pd
+</code></pre>
+<pre><code class="language-python">df = pd.read_csv('/kaggle/working/train_base.csv')
+</code></pre>
+<pre><code class="language-python">df['性别值'] = df['性别'].map({'male': 1, 'female': 2})
+df['登船港口'] = df['登船港口_labelEncode']
+df.drop('登船港口_labelEncode', axis=1, inplace=True)
+df['船票信息'] = df['船票信息_labelEncode']
+df.drop('船票信息_labelEncode', axis=1, inplace=True)
+df['年龄'] = df['年龄段']
+df.drop('年龄段', axis=1, inplace=True)
+df['性别'] = df['性别值']
+df.drop('性别值', axis=1, inplace=True)
+</code></pre>
+<pre><code class="language-python">print(df.columns)
+</code></pre>
+<pre><code>Index(['乘客ID', '是否幸存', '仓位等级', '姓名', '性别', '年龄', '兄弟姐妹个数', '父母子女个数', '船票信息',
+       '票价', '客舱', '登船港口'],
+      dtype='object')
+</code></pre>
+<pre><code class="language-python"># 定义要保留的列名称
+left_columns = ['乘客ID', '是否幸存', '仓位等级', '姓名']
+# 选择这些列创建train_left
+train_left = df[left_columns]
+# 剩下的列将自动被分配到train_right
+train_right = df.drop(left_columns, axis=1)
+</code></pre>
+<pre><code class="language-python">train_right
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2.0</td>
+      <td>4.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>41</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>374</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>710</th>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>0</td>
+      <td>5</td>
+      <td>378</td>
+      <td>29.1250</td>
+      <td>NaN</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>711</th>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>84</td>
+      <td>13.0000</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>712</th>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>13</td>
+      <td>30.0000</td>
+      <td>B42</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>713</th>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>9</td>
+      <td>30.0000</td>
+      <td>C148</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>714</th>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>372</td>
+      <td>7.7500</td>
+      <td>NaN</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+<p>715 rows × 8 columns</p>
+</div>
+<pre><code class="language-python">split_index = train_left.shape[0] // 2
+# 获取左/右上部分的DataFrame
+train_left_up = train_left.iloc[:split_index]
+train_right_up = train_right.iloc[:split_index]
+
+# 获取左/右下部分的DataFrame
+train_left_down = train_left.iloc[split_index:]
+train_right_down = train_right.iloc[split_index:]
+
+train_left_up.to_csv('/kaggle/working/train_left_up.csv')
+train_right_up.to_csv('/kaggle/working/train_right_up.csv')
+train_left_down.to_csv('/kaggle/working/train_left_down.csv')
+train_right_down.to_csv('/kaggle/working/train_right_down.csv')
+</code></pre>
+<pre><code class="language-python"># 使用concat方法：将数据train-left-up.csv和train-right-up.csv横向合并为一张表，并保存这张表为result_up
+list_up = [train_left_up,train_right_up]
+result_up = pd.concat(list_up,axis=1)
+result_up.head(-4)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>2.0</td>
+      <td>4.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>41</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>374</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>348</th>
+      <td>435</td>
+      <td>0</td>
+      <td>1</td>
+      <td>Silvey, Mr. William Baird</td>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>62</td>
+      <td>55.9000</td>
+      <td>E44</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>349</th>
+      <td>436</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Carter, Miss. Lucile Polk</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>2</td>
+      <td>27</td>
+      <td>120.0000</td>
+      <td>B96 B98</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>350</th>
+      <td>437</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Ford, Miss. Doolina Margaret "Daisy"</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>539</td>
+      <td>34.3750</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>351</th>
+      <td>438</td>
+      <td>1</td>
+      <td>2</td>
+      <td>Richards, Mrs. Sidney (Emily Hocking)</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>2</td>
+      <td>3</td>
+      <td>197</td>
+      <td>18.7500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>352</th>
+      <td>439</td>
+      <td>0</td>
+      <td>1</td>
+      <td>Fortune, Mr. Mark</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>1</td>
+      <td>4</td>
+      <td>79</td>
+      <td>263.0000</td>
+      <td>C23 C25 C27</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+<p>353 rows × 12 columns</p>
+</div>
+<pre><code class="language-python"># 使用concat方法：将train-left-down和train-right-down横向合并为一张表，并保存这张表为result_down。然后将上边的result_up和result_down纵向合并为result
+list_down = [train_left_down,train_right_down]
+result_down = pd.concat(list_down, axis=1)
+result_down.head(-4)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>357</th>
+      <td>444</td>
+      <td>1</td>
+      <td>2</td>
+      <td>Reynaldo, Ms. Encarnacion</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>98</td>
+      <td>13.0000</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>358</th>
+      <td>446</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Dodge, Master. Washington</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0</td>
+      <td>2</td>
+      <td>234</td>
+      <td>81.8583</td>
+      <td>A34</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>359</th>
+      <td>447</td>
+      <td>1</td>
+      <td>2</td>
+      <td>Mellinger, Miss. Madeleine Violet</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>139</td>
+      <td>19.5000</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>360</th>
+      <td>448</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Seward, Mr. Frederic Kimber</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>38</td>
+      <td>26.5500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>361</th>
+      <td>449</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Baclini, Miss. Marie Catherine</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>2</td>
+      <td>1</td>
+      <td>161</td>
+      <td>19.2583</td>
+      <td>NaN</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>706</th>
+      <td>882</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Markun, Mr. Johann</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>321</td>
+      <td>7.8958</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>707</th>
+      <td>883</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Dahlberg, Miss. Gerda Ulrika</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>397</td>
+      <td>10.5167</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>708</th>
+      <td>884</td>
+      <td>0</td>
+      <td>2</td>
+      <td>Banfield, Mr. Frederick James</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>446</td>
+      <td>10.5000</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>709</th>
+      <td>885</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Sutehall, Mr. Henry Jr</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>516</td>
+      <td>7.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>710</th>
+      <td>886</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Rice, Mrs. William (Margaret Norton)</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>0</td>
+      <td>5</td>
+      <td>378</td>
+      <td>29.1250</td>
+      <td>NaN</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+<p>354 rows × 12 columns</p>
+</div>
+<pre><code class="language-python">result_up.shape, result_down.shape
+</code></pre>
+<pre><code>((357, 12), (358, 12))
+</code></pre>
+<pre><code class="language-python">result = pd.concat([result_up,result_down])
+result.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>2.0</td>
+      <td>4.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>41</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>374</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">result.to_csv('/kaggle/working/result.csv', index=False)
+</code></pre>
+<pre><code class="language-python"># 将完整的数据加载出来
+text = pd.read_csv('/kaggle/working/result.csv')
+text.head()
+# 代码写在这里
+unit_result=text.stack().head(20)
+unit_result.head()
+</code></pre>
+<pre><code>0  乘客ID                          1
+   是否幸存                          0
+   仓位等级                          3
+   姓名      Braund, Mr. Owen Harris
+   性别                          1.0
+dtype: object
+</code></pre>
+<pre><code class="language-python">unit_result.shape
+</code></pre>
+<pre><code>(20,)
+</code></pre>
+<pre><code class="language-python">unit_result.to_csv('/kaggle/working/unit_result.csv')
+test = pd.read_csv('/kaggle/working/unit_result.csv')
+test.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>Unnamed: 1</th>
+      <th>0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>乘客ID</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>是否幸存</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>仓位等级</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>姓名</td>
+      <td>Braund, Mr. Owen Harris</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>性别</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3 id="数据聚合与运算">数据聚合与运算</h3>
+<pre><code class="language-python">text = pd.read_csv('/kaggle/working/result.csv')
+text.head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">text['是否幸存'].sum()
+</code></pre>
+<pre><code>290
+</code></pre>
+<pre><code class="language-python"># 计算泰坦尼克号男性与女性的平均票价
+df = text['票价'].groupby(text['性别'])
+means = df.mean()
+means
+</code></pre>
+<pre><code>性别
+1.0    27.268836
+2.0    47.582759
+Name: 票价, dtype: float64
+</code></pre>
+<pre><code class="language-python"># 统计泰坦尼克号中男女的存活人数
+survived_sex = text['是否幸存'].groupby(text['性别']).sum()
+survived_sex.head()
+</code></pre>
+<pre><code>性别
+1.0     93
+2.0    197
+Name: 是否幸存, dtype: int64
+</code></pre>
+<pre><code class="language-python">text['是否幸存'].sum()
+</code></pre>
+<pre><code>290
+</code></pre>
+<pre><code class="language-python">survived_pclass = text['是否幸存'].groupby(text['仓位等级'])
+survived_pclass.sum()
+</code></pre>
+<pre><code>仓位等级
+0      0
+1    122
+2     83
+3     85
+Name: 是否幸存, dtype: int64
+</code></pre>
+<pre><code class="language-python">#例子：
+text.groupby('Sex').agg({'Fare': 'mean', 'Pclass': 'count'}).rename(columns=
+                            {'Fare': 'mean_fare', 'Pclass': 'count_pclass'})
+</code></pre>
+<pre><code class="language-python">text.groupby('性别').agg({'票价': 'mean', '仓位等级': 'count'}).rename(columns=
+                            {'票价': 'mean_fare', '仓位等级': 'count_pclass'})
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mean_fare</th>
+      <th>count_pclass</th>
+    </tr>
+    <tr>
+      <th>性别</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1.0</th>
+      <td>27.268836</td>
+      <td>453</td>
+    </tr>
+    <tr>
+      <th>2.0</th>
+      <td>47.582759</td>
+      <td>261</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 统计在不同等级的票中的不同年龄的船票花费的平均值
+text.groupby(['票价','年龄'])['票价'].mean().head(3)
+</code></pre>
+<pre><code>票价   年龄 
+0.0  1.0    0.0
+     2.0    0.0
+     3.0    0.0
+Name: 票价, dtype: float64
+</code></pre>
+<pre><code class="language-python">result = pd.merge(means,survived_sex,on='性别')
+result
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>票价</th>
+      <th>是否幸存</th>
+    </tr>
+    <tr>
+      <th>性别</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1.0</th>
+      <td>27.268836</td>
+      <td>93</td>
+    </tr>
+    <tr>
+      <th>2.0</th>
+      <td>47.582759</td>
+      <td>197</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">result.to_csv('/kaggle/working/sex_fare_survived.csv')
+</code></pre>
+<pre><code class="language-python"># 得出不同年龄的总的存活人数，然后找出存活人数最多的年龄段，最后计算存活人数最高的存活率（存活人数/总人数）
+#不同年龄的存活人数
+survived_age = text['是否幸存'].groupby(text['年龄']).sum()
+survived_age.head()
+</code></pre>
+<pre><code>年龄
+1.0    42
+2.0    56
+3.0    50
+4.0    70
+5.0    50
+Name: 是否幸存, dtype: int64
+</code></pre>
+<pre><code class="language-python">#找出最大值的年龄段
+survived_age[survived_age.values==survived_age.max()]
+</code></pre>
+<pre><code>年龄
+4.0    70
+Name: 是否幸存, dtype: int64
+</code></pre>
+<pre><code class="language-python">_sum = text['是否幸存'].sum()
+print(_sum)
+</code></pre>
+<pre><code>290
+</code></pre>
+<pre><code class="language-python"># 首先计算总人数
+_sum = text['是否幸存'].sum()
+print(&quot;sum of person:&quot;+str(_sum))
+precetn =survived_age.max()/_sum
+print(&quot;最大存活率：&quot;+str(precetn))
+</code></pre>
+<pre><code>sum of person:290
+最大存活率：0.2413793103448276
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[动手学数据分析（二）数据清洗及特征处理]]></title>
+        <id>https://lab.moguw.top/post/hands-on-data-analysis-2/</id>
+        <link href="https://lab.moguw.top/post/hands-on-data-analysis-2/">
+        </link>
+        <updated>2024-03-13T09:13:55.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-python">#加载所需的库
+import numpy as np
+import pandas as pd
+</code></pre>
+<pre><code class="language-python">#加载数据train.csv
+df = pd.read_csv('/kaggle/working/train_chinese.csv')
+df.head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2 id="1-数据清洗简述">1. 数据清洗简述</h2>
+<p>我们拿到的数据通常是不干净的，所谓的不干净，就是数据中有缺失值，有一些异常点等，需要经过一定的处理才能继续做后面的分析或建模，所以拿到数据的第一步是进行数据清洗，本章我们将学习缺失值、重复值、字符串和数据转换等操作，将数据清洗成可以分析或建模的样子。</p>
+<h3 id="11-缺失值观察与处理">1.1 缺失值观察与处理</h3>
+<p>我们拿到的数据经常会有很多缺失值，比如我们可以看到Cabin列存在NaN，那其他列还有没有缺失值，这些缺失值要怎么处理呢</p>
+<pre><code class="language-python"># 不同方式观察缺失值
+df.info()
+</code></pre>
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 891 entries, 0 to 890
+Data columns (total 12 columns):
+ #   Column  Non-Null Count  Dtype  
+---  ------  --------------  -----  
+ 0   乘客ID    891 non-null    int64  
+ 1   是否幸存    891 non-null    int64  
+ 2   仓位等级    891 non-null    int64  
+ 3   姓名      891 non-null    object 
+ 4   性别      891 non-null    object 
+ 5   年龄      714 non-null    float64
+ 6   兄弟姐妹个数  891 non-null    int64  
+ 7   父母子女个数  891 non-null    int64  
+ 8   船票信息    891 non-null    object 
+ 9   票价      891 non-null    float64
+ 10  客舱      204 non-null    object 
+ 11  登船港口    889 non-null    object 
+dtypes: float64(2), int64(5), object(5)
+memory usage: 83.7+ KB
+</code></pre>
+<pre><code class="language-python">#方法二
+df.isnull().sum()
+</code></pre>
+<pre><code>乘客ID        0
+是否幸存        0
+仓位等级        0
+姓名          0
+性别          0
+年龄        177
+兄弟姐妹个数      0
+父母子女个数      0
+船票信息        0
+票价          0
+客舱        687
+登船港口        2
+dtype: int64
+</code></pre>
+<pre><code class="language-python">df[['年龄','客舱','登船港口']].head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>年龄</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>22.0</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>38.0</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>26.0</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3 id="12-对缺失值进行处理">1.2 对缺失值进行处理</h3>
+<ul>
+<li>tips: 检索空缺值用np.nan,None以及.isnull()哪个更好，这是为什么？如果其中某个方式无法找到缺失值，原因又是为什么？</li>
+<li>answer: 数值列读取数据后，空缺值的数据类型为float64所以用None一般索引不到，比较的时候最好用np.nan</li>
+</ul>
+<pre><code class="language-python">df[df['年龄']==None]=0
+df.head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">df[df['年龄'].isnull()] = 0
+df.head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">df[df['年龄'] == np.nan] = 0
+df.head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">df.dropna().head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0000</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">df.fillna(0).head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>0</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>0</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>dropna和fillna有哪些参数，分别如何使用呢?</p>
+<h3 id="22-重复值观察与处理">2.2 重复值观察与处理</h3>
+<pre><code class="language-python"># 查看数据中的重复值
+df[df.duplicated()]
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>17</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>859</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>863</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>868</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>878</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>888</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>176 rows × 12 columns</p>
+</div>
+<pre><code class="language-python"># 对重复值进行处理
+df = df.drop_duplicates()
+df.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 将前面清洗的数据保存为csv格式
+df.to_csv('/kaggle/working/clear.csv')
+</code></pre>
+<h3 id="23-特征观察与处理">2.3 特征观察与处理</h3>
+<p>我们对特征进行一下观察，可以把特征大概分为两大类：</p>
+<ul>
+<li><strong>数值型特征</strong>：Survived ，Pclass， Age ，SibSp， Parch， Fare，其中Survived， Pclass为离散型数值特征，Age，SibSp， Parch， Fare为连续型数值特征</li>
+<li><strong>文本型特征</strong>：Name， Sex， Cabin，Embarked， Ticket，其中Sex， Cabin， Embarked， Ticket为类别型文本特征。</li>
+</ul>
+<p>数值型特征一般可以直接用于模型的训练，但有时候为了模型的稳定性及鲁棒性会对连续变量进行离散化。文本型特征往往需要转换成数值型特征才能用于建模分析。</p>
+<pre><code class="language-python">import warnings
+warnings.filterwarnings(&quot;ignore&quot;)
+</code></pre>
+<pre><code class="language-python"># 对年龄进行分箱（离散化）处理
+
+# 将连续变量Age平均分箱成5个年龄段，并分别用类别变量12345表示
+df['年龄段'] = pd.cut(df['年龄'], 5,labels = [1,2,3,4,5])
+df.to_csv('/kaggle/working/ave.csv')
+df.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+      <th>年龄段</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">#将连续变量Age划分为(0,5] (5,15] (15,30] (30,50] (50,80]五个年龄段，并分别用类别变量12345表示
+df['年龄段'] = pd.cut(df['年龄段'],[0,5,15,30,50,80],labels = [1,2,3,4,5])
+df.to_csv('/kaggle/working/cut.csv')
+df.head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+      <th>年龄段</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">#将连续变量Age按10% 30% 50 70% 90%五个年龄段，并用分类变量12345表示
+df['年龄段'] = pd.qcut(df['年龄'],[0,0.1,0.3,0.5,0.7,0.9],labels = [1,2,3,4,5])
+df.to_csv('/kaggle/working/pr.csv')
+df.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+      <th>年龄段</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>4</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">#查看类别文本变量名及种类
+
+#方法一: value_counts
+df['性别'].value_counts()
+</code></pre>
+<pre><code>性别
+male      453
+female    261
+0           1
+Name: count, dtype: int64
+</code></pre>
+<pre><code class="language-python">df['客舱'].value_counts()
+</code></pre>
+<pre><code>客舱
+G6             4
+C23 C25 C27    4
+B96 B98        4
+F33            3
+C22 C26        3
+              ..
+C124           1
+C32            1
+E34            1
+C7             1
+C148           1
+Name: count, Length: 135, dtype: int64
+</code></pre>
+<pre><code class="language-python">df['登船港口'].value_counts()
+</code></pre>
+<pre><code>登船港口
+S    554
+C    130
+Q     28
+0      1
+Name: count, dtype: int64
+</code></pre>
+<pre><code class="language-python">#方法二: unique
+df['性别'].unique()
+</code></pre>
+<pre><code>array(['male', 'female', 0], dtype=object)
+</code></pre>
+<pre><code class="language-python">df['性别'].nunique()
+</code></pre>
+<pre><code>3
+</code></pre>
+<pre><code class="language-python">#将类别文本转换为12345
+
+#方法一: replace
+df['性别值'] = df['性别'].replace(['male','female'],[1,2])
+df.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+      <th>年龄段</th>
+      <th>性别值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+      <td>5</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>3</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+      <td>4</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>4</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">#方法二: map
+df['性别值'] = df['性别'].map({'male': 1, 'female': 2})
+df.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+      <th>年龄段</th>
+      <th>性别值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>2</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+      <td>5</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>3</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+      <td>4</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>4</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">#方法三: 使用sklearn.preprocessing的LabelEncoder
+from sklearn.preprocessing import LabelEncoder
+for feat in ['登船港口', '船票信息']:
+    lbl = LabelEncoder()  
+    label_dict = dict(zip(df[feat].unique(), range(df[feat].nunique())))
+    df[feat + &quot;_labelEncode&quot;] = df[feat].map(label_dict)
+    df[feat + &quot;_labelEncode&quot;] = lbl.fit_transform(df[feat].astype(str))
+
+df.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+      <th>年龄段</th>
+      <th>性别值</th>
+      <th>登船港口_labelEncode</th>
+      <th>船票信息_labelEncode</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>2</td>
+      <td>1.0</td>
+      <td>3</td>
+      <td>409</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+      <td>5</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>472</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>3</td>
+      <td>2.0</td>
+      <td>3</td>
+      <td>533</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+      <td>4</td>
+      <td>2.0</td>
+      <td>3</td>
+      <td>41</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+      <td>4</td>
+      <td>1.0</td>
+      <td>3</td>
+      <td>374</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">#将类别文本转换为one-hot编码
+
+#方法一: OneHotEncoder
+for feat in [&quot;年龄&quot;, &quot;登船港口&quot;]:
+#     x = pd.get_dummies(df[&quot;Age&quot;] // 6)
+#     x = pd.get_dummies(pd.cut(df['Age'],5))
+    x = pd.get_dummies(df[feat], prefix=feat)
+    df = pd.concat([df, x], axis=1)
+    #df[feat] = pd.get_dummies(df[feat], prefix=feat)
+    
+df.head()
+
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>...</th>
+      <th>年龄_66.0</th>
+      <th>年龄_70.0</th>
+      <th>年龄_70.5</th>
+      <th>年龄_71.0</th>
+      <th>年龄_74.0</th>
+      <th>年龄_80.0</th>
+      <th>登船港口_0</th>
+      <th>登船港口_C</th>
+      <th>登船港口_Q</th>
+      <th>登船港口_S</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>...</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>...</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>True</td>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>...</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>...</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>...</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 109 columns</p>
+</div>
+<pre><code class="language-python"># 从纯文本Name特征里提取出Titles的特征(所谓的Titles就是Mr,Miss,Mrs等)
+df['称呼'] = df['姓名'].str.extract('([A-Za-z]+)\.', expand=False)
+df.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>...</th>
+      <th>年龄_70.0</th>
+      <th>年龄_70.5</th>
+      <th>年龄_71.0</th>
+      <th>年龄_74.0</th>
+      <th>年龄_80.0</th>
+      <th>登船港口_0</th>
+      <th>登船港口_C</th>
+      <th>登船港口_Q</th>
+      <th>登船港口_S</th>
+      <th>称呼</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>...</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>True</td>
+      <td>Mr</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>...</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>True</td>
+      <td>False</td>
+      <td>False</td>
+      <td>Mrs</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>...</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>True</td>
+      <td>Miss</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>...</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>True</td>
+      <td>Mrs</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>...</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>True</td>
+      <td>Mr</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 110 columns</p>
+</div>
+<pre><code class="language-python"># 保存上面的为最终结论
+df.to_csv('/kaggle/working/test_fin.csv')
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[动手学数据分析（一）数据载入及初步观察]]></title>
+        <id>https://lab.moguw.top/post/hands-on-data-analysis-1/</id>
+        <link href="https://lab.moguw.top/post/hands-on-data-analysis-1/">
+        </link>
+        <updated>2024-03-12T04:31:06.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-python">import numpy as np
+import pandas as pd
+</code></pre>
+<h2 id="1-加载数据">1. 加载数据</h2>
+<h3 id="11-pandas读取csv数据">1.1 Pandas读取csv数据</h3>
+<pre><code class="language-python">df = pd.read_csv('/kaggle/input/titanic/train.csv')
+df.head(5)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3 id="12-分块读取">1.2 分块读取</h3>
+<pre><code class="language-python"># 每1000行为一个数据模块，逐块读取
+# 这样做的好处是可以减少内存占用，提高处理速度，特别是在处理大型数据集时非常有用
+# chunker 是一个迭代器，每次迭代都会返回一个包含1000行数据的DataFrame
+chunker = pd.read_csv('/kaggle/input/titanic/train.csv', chunksize=1000)
+
+for i, chunk in enumerate(chunker):
+    print(f&quot;Chunk{i+1}&quot;)
+    print(chunk)
+    break
+
+# 观察发现一共就891条数据
+</code></pre>
+<pre><code>Chunk1
+     PassengerId  Survived  Pclass  \
+0              1         0       3   
+1              2         1       1   
+2              3         1       3   
+3              4         1       1   
+4              5         0       3   
+..           ...       ...     ...   
+886          887         0       2   
+887          888         1       1   
+888          889         0       3   
+889          890         1       1   
+890          891         0       3   
+
+                                                  Name     Sex   Age  SibSp  \
+0                              Braund, Mr. Owen Harris    male  22.0      1   
+1    Cumings, Mrs. John Bradley (Florence Briggs Th...  female  38.0      1   
+2                               Heikkinen, Miss. Laina  female  26.0      0   
+3         Futrelle, Mrs. Jacques Heath (Lily May Peel)  female  35.0      1   
+4                             Allen, Mr. William Henry    male  35.0      0   
+..                                                 ...     ...   ...    ...   
+886                              Montvila, Rev. Juozas    male  27.0      0   
+887                       Graham, Miss. Margaret Edith  female  19.0      0   
+888           Johnston, Miss. Catherine Helen &quot;Carrie&quot;  female   NaN      1   
+889                              Behr, Mr. Karl Howell    male  26.0      0   
+890                                Dooley, Mr. Patrick    male  32.0      0   
+
+     Parch            Ticket     Fare Cabin Embarked  
+0        0         A/5 21171   7.2500   NaN        S  
+1        0          PC 17599  71.2833   C85        C  
+2        0  STON/O2. 3101282   7.9250   NaN        S  
+3        0            113803  53.1000  C123        S  
+4        0            373450   8.0500   NaN        S  
+..     ...               ...      ...   ...      ...  
+886      0            211536  13.0000   NaN        S  
+887      0            112053  30.0000   B42        S  
+888      2        W./C. 6607  23.4500   NaN        S  
+889      0            111369  30.0000  C148        C  
+890      0            370376   7.7500   NaN        Q  
+
+[891 rows x 12 columns]
+</code></pre>
+<p>将表头改成中文，索引改为乘客ID</p>
+<ul>
+<li>PassengerId =&gt; 乘客ID</li>
+<li>Survived =&gt; 是否幸存</li>
+<li>Pclass =&gt; 乘客等级(1/2/3等舱位)</li>
+<li>Name =&gt; 乘客姓名</li>
+<li>Sex =&gt; 性别</li>
+<li>Age =&gt; 年龄</li>
+<li>SibSp =&gt; 堂兄弟/妹个数</li>
+<li>Parch =&gt; 父母与小孩个数</li>
+<li>Ticket =&gt; 船票信息</li>
+<li>Fare =&gt; 票价</li>
+<li>Cabin =&gt; 客舱</li>
+<li>Embarked =&gt; 登船港口</li>
+</ul>
+<h2 id="2-数据处理">2. 数据处理</h2>
+<pre><code class="language-python">df = df.rename(columns={'PassengerId': '乘客ID', 'Survived': '是否幸存', 'Pclass': '仓位等级', 'Name': '姓名', 'Sex': '性别', 'Age': '年龄', 'SibSp': '兄弟姐妹个数', 'Parch': '父母子女个数', 'Ticket': '船票信息', 'Fare': '票价', 'Cabin': '客舱', 'Embarked': '登船港口'})
+df = df.set_index('乘客ID')
+df.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+    <tr>
+      <th>乘客ID</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3 id="23-查看数据的基本信息">2.3 查看数据的基本信息</h3>
+<pre><code class="language-python">df.info()
+</code></pre>
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+Index: 891 entries, 1 to 891
+Data columns (total 11 columns):
+ #   Column  Non-Null Count  Dtype  
+---  ------  --------------  -----  
+ 0   是否幸存    891 non-null    int64  
+ 1   仓位等级    891 non-null    int64  
+ 2   姓名      891 non-null    object 
+ 3   性别      891 non-null    object 
+ 4   年龄      714 non-null    float64
+ 5   兄弟姐妹个数  891 non-null    int64  
+ 6   父母子女个数  891 non-null    int64  
+ 7   船票信息    891 non-null    object 
+ 8   票价      891 non-null    float64
+ 9   客舱      204 non-null    object 
+ 10  登船港口    889 non-null    object 
+dtypes: float64(2), int64(4), object(5)
+memory usage: 83.5+ KB
+</code></pre>
+<pre><code class="language-python">df.head(-5)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+    <tr>
+      <th>乘客ID</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>882</th>
+      <td>0</td>
+      <td>3</td>
+      <td>Markun, Mr. Johann</td>
+      <td>male</td>
+      <td>33.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>349257</td>
+      <td>7.8958</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>883</th>
+      <td>0</td>
+      <td>3</td>
+      <td>Dahlberg, Miss. Gerda Ulrika</td>
+      <td>female</td>
+      <td>22.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>7552</td>
+      <td>10.5167</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>884</th>
+      <td>0</td>
+      <td>2</td>
+      <td>Banfield, Mr. Frederick James</td>
+      <td>male</td>
+      <td>28.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>C.A./SOTON 34068</td>
+      <td>10.5000</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>885</th>
+      <td>0</td>
+      <td>3</td>
+      <td>Sutehall, Mr. Henry Jr</td>
+      <td>male</td>
+      <td>25.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>SOTON/OQ 392076</td>
+      <td>7.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>886</th>
+      <td>0</td>
+      <td>3</td>
+      <td>Rice, Mrs. William (Margaret Norton)</td>
+      <td>female</td>
+      <td>39.0</td>
+      <td>0</td>
+      <td>5</td>
+      <td>382652</td>
+      <td>29.1250</td>
+      <td>NaN</td>
+      <td>Q</td>
+    </tr>
+  </tbody>
+</table>
+<p>886 rows × 11 columns</p>
+</div>
+<h3 id="24-判断数据是否为空为空的地方返回true其余地方返回false">2.4 判断数据是否为空，为空的地方返回True，其余地方返回False</h3>
+<pre><code class="language-python">df.isnull().head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+    <tr>
+      <th>乘客ID</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>True</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>True</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+      <td>True</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 保存中间结果
+df.to_csv('/kaggle/working/train_chinese.csv')
+</code></pre>
+<h2 id="3-数据分析">3. 数据分析</h2>
+<pre><code class="language-python">#载入之前保存的train_chinese.csv数据，关于泰坦尼克号的任务，我们就使用这个数据
+text = pd.read_csv('/kaggle/working/train_chinese.csv')
+text.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3 id="31-对泰坦尼克号数据triancsv按票价和年龄两列进行综合排序降序排列">3.1 对泰坦尼克号数据（trian.csv）按票价和年龄两列进行综合排序（降序排列）</h3>
+<pre><code class="language-python">text.sort_values(by=['票价', '年龄'], ascending=False).head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>679</th>
+      <td>680</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cardeza, Mr. Thomas Drake Martinez</td>
+      <td>male</td>
+      <td>36.0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>PC 17755</td>
+      <td>512.3292</td>
+      <td>B51 B53 B55</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>258</th>
+      <td>259</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Ward, Miss. Anna</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>PC 17755</td>
+      <td>512.3292</td>
+      <td>NaN</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>737</th>
+      <td>738</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Lesurer, Mr. Gustave J</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>PC 17755</td>
+      <td>512.3292</td>
+      <td>B101</td>
+      <td>C</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3 id="32-分别看看泰坦尼克号数据集中-票价-父母子女-这列数据的基本统计数据">3.2 分别看看泰坦尼克号数据集中 票价、父母子女 这列数据的基本统计数据</h3>
+<pre><code class="language-python"># 看看泰坦尼克号数据集中 票价 这列数据的基本统计数据
+text['票价'].describe()
+</code></pre>
+<pre><code>count    891.000000
+mean      32.204208
+std       49.693429
+min        0.000000
+25%        7.910400
+50%       14.454200
+75%       31.000000
+max      512.329200
+Name: 票价, dtype: float64
+</code></pre>
+<pre><code class="language-python">text['父母子女个数'].describe()
+</code></pre>
+<pre><code>count    891.000000
+mean       0.381594
+std        0.806057
+min        0.000000
+25%        0.000000
+50%        0.000000
+75%        0.000000
+max        6.000000
+Name: 父母子女个数, dtype: float64
+</code></pre>
+<h1 id="附录pandas基础教程">附录：Pandas基础教程</h1>
+<h2 id="dataframe与series">DataFrame与Series</h2>
+<ul>
+<li>
+<p>DataFrame：它是一个<strong>二维表格型</strong>数据结构，可以看作是由多个Series组成的字典。每个Series都是一个一维的数据结构，包含了一组数据（如整数、字符串等）。DataFrame的行索引和列索引都可以是任意的Python对象，如字符串、日期等。DataFrame非常适合用于处理结构化数据，如表格数据、时间序列数据等。</p>
+</li>
+<li>
+<p>Series：它是一个<strong>一维数组型</strong>数据结构，可以看作是<strong>一个带有标签的一维数组</strong>。Series的索引可以是任意的Python对象，如字符串、日期等。Series非常适合用于处理一维数据，如时间序列数据、统计数据等。</p>
+</li>
+</ul>
+<pre><code class="language-python"># 创建一个DataFrame
+data = {'A': [1, 2, 3], 'B': [4, 5, 6]}
+df = pd.DataFrame(data)
+print(f&quot;DataFrame:\n{df}&quot;)
+</code></pre>
+<pre><code>DataFrame:
+   A  B
+0  1  4
+1  2  5
+2  3  6
+</code></pre>
+<pre><code class="language-python"># 创建一个Series
+s = pd.Series([1, 2, 3], index=['a', 'b', 'c'])
+print(f&quot;Series:\n{s}&quot;)
+</code></pre>
+<pre><code>Series:
+a    1
+b    2
+c    3
+dtype: int64
+</code></pre>
+<h2 id="pandas观察数据">Pandas观察数据</h2>
+<pre><code class="language-python">df = pd.read_csv('/kaggle/input/titanic/train.csv')
+df.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">df.columns
+</code></pre>
+<pre><code>Index(['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
+       'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked'],
+      dtype='object')
+</code></pre>
+<pre><code class="language-python"># 查看&quot;Cabin&quot;这列的所有值
+df['Cabin'].head(3)
+</code></pre>
+<pre><code>0    NaN
+1    C85
+2    NaN
+Name: Cabin, dtype: object
+</code></pre>
+<pre><code class="language-python">df.Cabin.head(3)
+</code></pre>
+<pre><code>0    NaN
+1    C85
+2    NaN
+Name: Cabin, dtype: object
+</code></pre>
+<pre><code class="language-python"># 将['PassengerId','Name','Age','Ticket']这几个列元素隐藏，只观察其他几个列元素
+df.drop(['PassengerId','Name','Age','Ticket'],axis=1).head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Sex</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>3</td>
+      <td>male</td>
+      <td>1</td>
+      <td>0</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1</td>
+      <td>female</td>
+      <td>1</td>
+      <td>0</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>3</td>
+      <td>female</td>
+      <td>0</td>
+      <td>0</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2 id="pandas筛选的逻辑">Pandas筛选的逻辑</h2>
+<pre><code class="language-python"># 以&quot;Age&quot;为条件，将年龄在10岁以上和50岁以下的乘客信息显示出来，并将这个数据命名为midage
+midage = df[(df[&quot;Age&quot;]&gt;10)&amp; (df[&quot;Age&quot;]&lt;50)]
+midage.head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 将midage的数据中第100行的&quot;Pclass&quot;和&quot;Sex&quot;的数据显示出来
+
+# reset_index()函数的作用是将DataFrame的索引重置为默认的整数索引，并删除原来的索引。
+# 如果不使用这个函数，下面的任务可能会出现错误，因为原始数据中的索引可能不是连续的整数，
+# 而我们需要访问第100行的数据，所以需要将索引重置为连续的整数。
+midage = midage.reset_index(drop=True)
+midage.head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 使用loc方法将midage的数据中第100，105，108行的&quot;Pclass&quot;，&quot;Name&quot;和&quot;Sex&quot;的数据显示出来
+midage.loc[[100,105,108],['Pclass','Name','Sex']]
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>100</th>
+      <td>2</td>
+      <td>Byles, Rev. Thomas Roussel Davids</td>
+      <td>male</td>
+    </tr>
+    <tr>
+      <th>105</th>
+      <td>3</td>
+      <td>Cribb, Mr. John Hatfield</td>
+      <td>male</td>
+    </tr>
+    <tr>
+      <th>108</th>
+      <td>3</td>
+      <td>Calic, Mr. Jovo</td>
+      <td>male</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 使用iloc方法将midage的数据中第100，105，108行的&quot;Pclass&quot;，&quot;Name&quot;和&quot;Sex&quot;的数据显示出来
+midage.iloc[[100,105,108],[2,3,4]]
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>100</th>
+      <td>2</td>
+      <td>Byles, Rev. Thomas Roussel Davids</td>
+      <td>male</td>
+    </tr>
+    <tr>
+      <th>105</th>
+      <td>3</td>
+      <td>Cribb, Mr. John Hatfield</td>
+      <td>male</td>
+    </tr>
+    <tr>
+      <th>108</th>
+      <td>3</td>
+      <td>Calic, Mr. Jovo</td>
+      <td>male</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<ul>
+<li>iloc是基于整数位置的索引，它接受的是行和列的位置（从0开始计数）作为参数。例如，midage.iloc[100, 2]表示选择第100行、第2列的数据。</li>
+<li>loc是基于标签的索引，它接受的是行和列的标签作为参数。例如，midage.loc[100, 'Pclass']表示选择第100行、'Pclass'列的数据。</li>
+</ul>
+<h2 id="pandas对数据进行排序">Pandas对数据进行排序</h2>
+<ul>
+<li>pd.DataFrame() ：创建一个DataFrame对象</li>
+<li>np.arange(8).reshape((2, 4)) : 生成一个二维数组（2*4）,第一列：0，1，2，3 第二列：4，5，6，7</li>
+<li>index=['2, 1] ：DataFrame 对象的索引列</li>
+<li>columns=['d', 'a', 'b', 'c'] ：DataFrame 对象的索引行</li>
+</ul>
+<pre><code class="language-python">frame = pd.DataFrame(np.arange(8).reshape((2, 4)), 
+                     index=['2', '1'], 
+                     columns=['d', 'a', 'b', 'c'])
+frame
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>d</th>
+      <th>a</th>
+      <th>b</th>
+      <th>c</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4</td>
+      <td>5</td>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">frame.sort_values(by='c', ascending=True)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>d</th>
+      <th>a</th>
+      <th>b</th>
+      <th>c</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4</td>
+      <td>5</td>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 让行索引升序排序
+frame.sort_index()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>d</th>
+      <th>a</th>
+      <th>b</th>
+      <th>c</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>4</td>
+      <td>5</td>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 让列索引升序排序
+frame.sort_index(axis=1)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>a</th>
+      <th>b</th>
+      <th>c</th>
+      <th>d</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>5</td>
+      <td>6</td>
+      <td>7</td>
+      <td>4</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 让列索引降序排序
+frame.sort_index(axis=1, ascending=False)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>d</th>
+      <th>c</th>
+      <th>b</th>
+      <th>a</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>3</td>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4</td>
+      <td>7</td>
+      <td>6</td>
+      <td>5</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 让任选两列数据同时降序排序
+frame.sort_values(by=['a', 'c'], ascending=False)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>d</th>
+      <th>a</th>
+      <th>b</th>
+      <th>c</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>4</td>
+      <td>5</td>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2 id="pandas进行算术计算">Pandas进行算术计算</h2>
+<pre><code class="language-python">#建立一个例子
+frame1_a = pd.DataFrame(np.arange(9.).reshape(3, 3),
+                     columns=['a', 'b', 'c'],
+                     index=['one', 'two', 'three'])
+frame1_b = pd.DataFrame(np.arange(12.).reshape(4, 3),
+                     columns=['a', 'e', 'c'],
+                     index=['first', 'one', 'two', 'second'])
+frame1_a
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>a</th>
+      <th>b</th>
+      <th>c</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>one</th>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>two</th>
+      <td>3.0</td>
+      <td>4.0</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>three</th>
+      <td>6.0</td>
+      <td>7.0</td>
+      <td>8.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">frame1_b
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>a</th>
+      <th>e</th>
+      <th>c</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>first</th>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>one</th>
+      <td>3.0</td>
+      <td>4.0</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>two</th>
+      <td>6.0</td>
+      <td>7.0</td>
+      <td>8.0</td>
+    </tr>
+    <tr>
+      <th>second</th>
+      <td>9.0</td>
+      <td>10.0</td>
+      <td>11.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 两个DataFrame相加后，会返回一个新的DataFrame，对应的行和列的值会相加，没有对应的会变成空值NaN。
+frame1_a + frame1_b
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>a</th>
+      <th>b</th>
+      <th>c</th>
+      <th>e</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>first</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>one</th>
+      <td>3.0</td>
+      <td>NaN</td>
+      <td>7.0</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>second</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>three</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>two</th>
+      <td>9.0</td>
+      <td>NaN</td>
+      <td>13.0</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2 id="pandas查看数据基本统计信息">Pandas查看数据基本统计信息</h2>
+<pre><code class="language-python">#建立一个例子
+frame2 = pd.DataFrame([[1.4, np.nan], 
+                       [7.1, -4.5],
+                       [np.nan, np.nan], 
+                       [0.75, -1.3]
+                      ], index=['a', 'b', 'c', 'd'], columns=['one', 'two'])
+frame2
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>one</th>
+      <th>two</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>a</th>
+      <td>1.40</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>b</th>
+      <td>7.10</td>
+      <td>-4.5</td>
+    </tr>
+    <tr>
+      <th>c</th>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>d</th>
+      <td>0.75</td>
+      <td>-1.3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">'''
+count : 样本数据大小
+mean : 样本数据的平均值
+std : 样本数据的标准差
+min : 样本数据的最小值
+25% : 样本数据25%的时候的值
+50% : 样本数据50%的时候的值
+75% : 样本数据75%的时候的值
+max : 样本数据的最大值
+'''
+frame2.describe()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>one</th>
+      <th>two</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>3.000000</td>
+      <td>2.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>3.083333</td>
+      <td>-2.900000</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>3.493685</td>
+      <td>2.262742</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>0.750000</td>
+      <td>-4.500000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>1.075000</td>
+      <td>-3.700000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>1.400000</td>
+      <td>-2.900000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>4.250000</td>
+      <td>-2.100000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>7.100000</td>
+      <td>-1.300000</td>
+    </tr>
+  </tbody>
+</table>
+</div>]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Rust简易入门（四）Error错误处理]]></title>
+        <id>https://lab.moguw.top/post/rust-base-4/</id>
+        <link href="https://lab.moguw.top/post/rust-base-4/">
+        </link>
+        <updated>2024-03-09T02:17:41.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="错误处理之result-option以及panic宏">错误处理之：Result、Option以及panic!宏</h2>
+<p>Rust中的错误可以分为两种</p>
+<ol>
+<li>Recoverable error：有返回类型</li>
+</ol>
+<p>返回Result类型</p>
+<p>返回Option类型</p>
+<ol start="2">
+<li>Unrecoverable type：没有返回类型，直接崩溃</li>
+</ol>
+<p>panic macro 将终止当前线程</p>
+<ul>
+<li>
+<p>Result 是一个枚举类型，有两个变体：Ok和Err。它通常用于表示函数的执行结果，其中Ok表示成功的结果，Err表示出现了错误<br>
+<code>pub enum Result&lt;T, E&gt; {   Ok(T),   Err(E) }</code></p>
+</li>
+<li>
+<p>Option也是一个枚举类型，有两个变体：Some和None。它通常用于表示一个可能为空的值。<br>
+<code>pub enum Option&lt;T&gt; {   None,   Some(T), }</code></p>
+</li>
+<li>
+<p>panic! 当程序遇到无法继续执行的错误时，可以用<code>panic!</code>宏来引发恐慌。恐慌会导致程序立即终止，并显示一条错误信息。</p>
+</li>
+</ul>
+<pre><code class="language-Rust">fn divide(a: i32, b: i32) -&gt; Result&lt;f64, String&gt; {
+    if b == 0 {
+        return Err(String::from(&quot;cannot be zero&quot;));
+    }
+    let a = a as f64;
+    let b = b as f64;
+    Ok(a / b)
+}
+
+fn find_element(array: &amp;[i32], target: i32) -&gt; Option&lt;usize&gt; {
+    for (index, element) in array.iter().enumerate(){
+        if (*element) == target {
+            return Some(index)
+        }
+    }
+    None
+}
+
+fn main(){
+    // result
+    match divide(1, 2) {
+        Ok(number) =&gt; println!(&quot;{number}&quot;),
+        Err(err) =&gt; println!(&quot;{err}&quot;),
+    }
+    
+    match divide(1, 0) {
+        Ok(number) =&gt; println!(&quot;{number}&quot;),
+        Err(err) =&gt; println!(&quot;{err}&quot;),
+    }
+    
+    // Option
+    let arr = [1, 2, 3, 4, 5];
+    match find_element(&amp;arr, 3) {
+        Some(index) =&gt; println!(&quot;the number 3 is located at {index}&quot;),
+        None =&gt; println!(&quot;cannot find the number 3&quot;),
+    }
+    
+    // panic!
+}
+</code></pre>
+<h2 id="错误处理之unwrap与">错误处理之：unwrap()与<code>?</code></h2>
+<p>unwrap()方法并不安全</p>
+<p>unwrap()是 Result 和 Option 类型提供的方法之一。它是一个简便的方法，用于获取 Ok 或 Some 的值，如果是Err 或 None 则会引发 panic</p>
+<p>? 运算符 用于简化 Result 或 Option 类型的错误传播。它只能用于返回 Result 或 Option 的函数中，并且在函数内部可以像使用 unwrap() 一样访问 Ok 或 Some 的值，但是如果是 Err 或者 None 则会提前返回。</p>
+<pre><code class="language-Rust">use std::num::ParseIntError;
+
+fn find_first_even(numbers: Vec&lt;i32&gt;) -&gt; Option&lt;i32&gt; {
+    let first_even = numbers.iter().find(|&amp;num| num % 2 == 0)?;
+    print!(&quot;Option&quot;);
+    Some(*first_even)
+}
+
+// 传递错误
+fn parse_numbers(input: &amp;str) -&gt; Result&lt;i32, ParseIntError&gt; {
+    let val = input.parse::&lt;i32&gt;()?;
+    Ok(val)
+}
+
+
+fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+    let result_ok: Result&lt;i32, &amp;str&gt; = Ok(32);
+    let value = result_ok.unwrap();
+    println!(&quot;{}&quot;, value);
+
+    let result_ok: Result&lt;i32, &amp;str&gt; = Ok(32);
+    let value = result_ok?;
+    println!(&quot;{}&quot;, value);
+
+    let numbers = vec![1, 3, 4, 5];
+    match find_first_even(numbers) {
+        Some(number) =&gt; println!(&quot;first even {}&quot;, number),
+        None =&gt; println!(&quot;no such number&quot;),
+    }
+
+    match parse_numbers(&quot;d&quot;) {
+        Ok(i) =&gt; println!(&quot;parsed {}&quot;, i),
+        Err(err) =&gt; println!(&quot;failed to parse: {}&quot;, err),
+    }
+
+    Ok(())
+}
+</code></pre>
+<h2 id="自定义一个error类型">自定义一个Error类型</h2>
+<p>1.定义错误类型结构体：创建一个结构体来表示你的错误类型，通常包含一些字段来描述错误的详细信息。</p>
+<p>2.实现 <code>std::fmt::Display</code> trait: 实现这个trait以定义如何展示错误信息。这是为了使错误能够以人类可读的方式打印出来。</p>
+<p>3.实现 <code>std:error::Error</code> trait: 实现这个trait以满足Rust的错误处理机制的要求。</p>
+<pre><code class="language-Rust">#[derive(Debug)]
+struct MyError {
+    detail: String,
+}
+
+impl std::fmt::Display for MyError {
+    fn fmt(&amp;self, f: &amp;mut std::fmt::Formatter&lt;'_&gt;) -&gt; std::fmt::Result {
+        write!(f, &quot;Customer Error: {}&quot;, self.detail)
+    }
+}
+
+impl std::error::Error for MyError {
+    fn description(&amp;self) -&gt; &amp;str {
+        &amp;self.detail
+    }
+    // &amp;String =&gt; &amp;str
+}
+
+
+fn func() -&gt; Result&lt;(), MyError&gt;{
+    Err(MyError{
+        detail: &quot;Custom Error&quot;.to_owned(),
+    })
+}
+
+
+fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {
+    match func() {
+        Ok(_) =&gt; println!(&quot;function ok&quot;),
+        Err(err) =&gt; println!(&quot;Error: {}&quot;, err),
+    }
+    
+    func()?;
+    println!(&quot;oo&quot;);
+    Ok(())
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Fortran气象信息系统工程]]></title>
+        <id>https://lab.moguw.top/post/Fortran气象信息系统工程/</id>
+        <link href="https://lab.moguw.top/post/Fortran气象信息系统工程/">
+        </link>
+        <updated>2024-03-09T02:07:12.000Z</updated>
+        <content type="html"><![CDATA[<blockquote>
+<p>不会吧😧，不会吧😧，都4022年了还有人学fortran</p>
+</blockquote>
+<h2 id="fortran-基本数据类型">Fortran 基本数据类型</h2>
+<figure data-type="image" tabindex="1"><img src="https://flowus.cn/preview/6e5ec31f-3101-424f-b531-0bea64b382f1" alt="image.png" loading="lazy"></figure>
+<h3 id="字符集与保留字">字符集与保留字</h3>
+<figure data-type="image" tabindex="2"><img src="https://flowus.cn/preview/dc8b9416-96bb-44a6-875a-81cb4935d11e" alt="image.png" loading="lazy"></figure>
+<ul>
+<li>
+<p>语句关键字：PROGRAM、INTEGER、REAL、READ、PRINT、WRITE、DO、END、SUBROUTINE、FUNCTION等</p>
+</li>
+<li>
+<p>内部函数名：ABS、SIN、LOG</p>
+</li>
+</ul>
+<h3 id="数据类型">数据类型</h3>
+<figure data-type="image" tabindex="3"><img src="https://flowus.cn/preview/2eb98f6a-97a4-4f86-82b1-907f9cc2a100" alt="image.png" loading="lazy"></figure>
+<ul>
+<li>数据类型四个性质<br>
+每个数据类型有一个<strong>唯一的名称</strong>；<br>
+每个数据类型规定了一个<strong>取值范围</strong>（值的集合)<br>
+每个数据类型规定了其常量数据的<strong>表示方法</strong>；<br>
+每个数据类型规定了一组操作。</li>
+</ul>
+<h3 id="常量">常量</h3>
+<pre><code class="language-Fortran">PROGRAM ex05_01
+  IMPLICIT NONE
+  REAL pi !声明定义pi类型时实型
+  PARAMETER(pi=3.1415926)
+  WRITE(*,*)sin(pi/6)
+  END
+</code></pre>
+<h3 id="变量">变量</h3>
+<ul>
+<li>
+<p>整形变量 integer</p>
+</li>
+<li>
+<p>实型变量 real</p>
+</li>
+<li>
+<p>复型变量 complex</p>
+</li>
+<li>
+<p>字符型变量 character</p>
+</li>
+<li>
+<p>逻辑型变量 logical</p>
+</li>
+</ul>
+<p>变量类型声明语句的格式：</p>
+<p><strong>类型说明</strong>[(种别说明)][,属性说明类]::<strong>变量名表</strong>[=初值]</p>
+<p>种别说明：变量所占用的字节数。例如：integer(8) a</p>
+<pre><code class="language-Fortran">integer f !缺省KIND=4
+integer::g = 10
+</code></pre>
+<pre><code class="language-Fortran">real f
+real::g = 1.23
+!若KIND=8，可以由DOUBLE PRECISION声明取代
+</code></pre>
+<pre><code class="language-Fortran">complex f
+complex::g = (3,4)
+</code></pre>
+<pre><code class="language-Fortran">character f
+character::g = 'A'
+</code></pre>
+<pre><code class="language-Fortran">logical f
+logical::g = .TRUE.
+</code></pre>
+<pre><code class="language-Fortran">program ex05_03
+  integer::a = 1
+  real::b = 2.0
+  complex::c = (1.0, 2.0)
+  character(len=10)::string = &quot;FORTRAN&quot;
+  write(*,*) a,b,c,string
+end
+</code></pre>
+<pre><code class="language-Fortran">program ex05_04
+  integer a
+  real b
+  complex c
+  character(len=10) string
+  data a, b, c, string / 1, 2.0, (1.0, 2.0), &quot;FORTRAN&quot; /
+  write(*,*) a, b, c, string
+ end
+</code></pre>
+<h2 id="运算符与表达式及语句">运算符与表达式及语句</h2>
+<h3 id="逻辑符与表达式">逻辑符与表达式</h3>
+<figure data-type="image" tabindex="4"><img src="https://flowus.cn/preview/e8557a36-6fa6-40d6-88b2-8758809bedff" alt="image.png" loading="lazy"></figure>
+<figure data-type="image" tabindex="5"><img src="https://flowus.cn/preview/f100a40e-7742-4c05-b2e0-927f517e4c69" alt="image.png" loading="lazy"></figure>
+<figure data-type="image" tabindex="6"><img src="https://flowus.cn/preview/ed1bdcd0-07b5-4aec-91bc-913e05fd89d5" alt="image.png" loading="lazy"></figure>
+<h3 id="语句和内部函数">语句和内部函数</h3>
+<figure data-type="image" tabindex="7"><img src="https://flowus.cn/preview/5fb8a756-467b-4cc6-84df-0034edb95555" alt="image.png" loading="lazy"></figure>
+<pre><code class="language-Fortran">program ex02_02
+    implicit none
+    character mo*2
+    mo = '1'
+    print *, mo, '月'
+    print *, trim(mo), '月'
+end
+</code></pre>
+<figure data-type="image" tabindex="8"><img src="https://flowus.cn/preview/2f343ca9-8d4a-4df6-bbbb-9317c71413cd" alt="image.png" loading="lazy"></figure>
+<pre><code class="language-Fortran">program main
+    implicit none
+    real::E0, E1, E2, t
+    parameter E0 = 6.11
+    print *, &quot;请输入t的值&quot;
+    read *, t
+    E1 = E0 * 10**(7.45*t/(237.3+t))
+    E2 = E0 * exp(17.67*t/(243.5+t))
+    print *, &quot;由E1计算：&quot;, E1, &quot;由E2计算&quot;, E2
+end
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Coggle 24/1月竞赛学习：动手学RAG]]></title>
+        <id>https://lab.moguw.top/post/Coggle竞赛学习：动手学RAG/</id>
+        <link href="https://lab.moguw.top/post/Coggle竞赛学习：动手学RAG/">
+        </link>
+        <updated>2024-03-04T04:13:56.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="内容介绍">内容介绍</h2>
+<p>检索增强生成（RAG）技术是为了克服大型语言模型（LLM）在生成连贯、自然的文本，回答问题，并执行其他复杂的语言任务中存在的一些固有的局限性，如“模型幻觉问题”、“时效性问题”和“数据安全问题”。</p>
+<figure data-type="image" tabindex="1"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/uoTGEibAZUEiaGXziasryXwGib7eSThrZPN1FfDibq6Xsyj13UUmvTpMu9zXuTg8OhHTTbY1qiaB6jw3vwLUmrKXQ9jQ/640?wx_fmt=jpeg&amp;from=appmsg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="https://mmbiz.qpic.cn/sz_mmbiz_jpg/uoTGEibAZUEiaGXziasryXwGib7eSThrZPN1FfDibq6Xsyj13UUmvTpMu9zXuTg8OhHTTbY1qiaB6jw3vwLUmrKXQ9jQ/640?wx_fmt=jpeg&amp;from=appmsg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" loading="lazy"></figure>
+<p>RAG技术结合了大型语言模型的强大生成能力和检索系统的精确性。它允许模型在生成文本时，从外部知识库中检索相关信息，从而提高生成内容的准确性、相关性和时效性。这种方法不仅增强了模型的回答能力，还减少了生成错误信息的风险。</p>
+<p>本月的学习内容主要围绕检索增强生成（RAG）技术展开：</p>
+<ul>
+<li>
+<p>RAG技术背景与动机</p>
+</li>
+<li>
+<p>RAG技术基本原理和技术流程</p>
+</li>
+<li>
+<p>知识库构建与管理、检索模块技术</p>
+</li>
+<li>
+<p>ChatGPT/ChatGLM的API使用</p>
+</li>
+</ul>
+<h2 id="动手学rag">动手学RAG</h2>
+<h3 id="背景介绍">背景介绍</h3>
+<p>本次活动参赛选手以大模型为中心制作一个问答系统，回答用户的汽车相关问题。参赛选手需要根据问题，在文档中定位相关信息的位置，并根据文档内容通过大模型生成相应的答案。涉及的问题主要围绕汽车使用、维修、保养等方面。</p>
+<pre><code class="language-Plain">问题1：怎么打开危险警告灯？
+答案1：危险警告灯开关在方向盘下方，按下开关即可打开危险警告灯。
+
+问题2：车辆如何保养？
+答案2：为了保持车辆处于最佳状态，建议您定期关注车辆状态，包括定期保养、洗车、内部清洁、外部清洁、轮胎的保养、低压蓄电池的保养等。
+
+问题3：靠背太热怎么办？
+答案3：您好，如果您的座椅靠背太热，可以尝试关闭座椅加热功能。在多媒体显示屏上依次点击空调开启按键→座椅→加热，在该界面下可以关闭座椅加热。
+</code></pre>
+<h3 id="打卡任务">打卡任务</h3>
+<table>
+<thead>
+<tr>
+<th>任务名称</th>
+<th>所需技能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>任务1：初始RAG</td>
+<td>无</td>
+</tr>
+<tr>
+<td>任务2：ChatGPT/GLM API使用</td>
+<td>Python</td>
+</tr>
+<tr>
+<td>任务3：读取汽车问答数据</td>
+<td>Python</td>
+</tr>
+<tr>
+<td>任务4：文本索引与答案检索</td>
+<td>TFIDF、BM25</td>
+</tr>
+<tr>
+<td>任务5：文本嵌入与向量检索</td>
+<td>Embedding、transformer</td>
+</tr>
+<tr>
+<td>任务6：文本多路召回与重排序</td>
+<td>ReRank</td>
+</tr>
+<tr>
+<td>任务7：文本问答Promopt优化</td>
+<td>Python</td>
+</tr>
+<tr>
+<td>任务8：问答意图识别（进阶方向）</td>
+<td>BERT/TFIDF</td>
+</tr>
+<tr>
+<td>任务9：问答关键词提取（进阶方向）</td>
+<td>TextRank</td>
+</tr>
+<tr>
+<td>任务10：扩展词与扩展查询（进阶方向）</td>
+<td>Word2Vec/BART</td>
+</tr>
+<tr>
+<td>任务11：本地微调ChatGLM（进阶方向）</td>
+<td>ChatGLM</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="具体流程">具体流程</h2>
+<p><a href="https://flowus.cn/596b0187-f5a8-4bf2-a2c5-c4caaaed1cd2">任务1：初始化RAG</a></p>
+<p><a href="https://flowus.cn/836534cb-4bf9-441b-a85e-4ed336b0866b">任务2：ChatGPT/GLM/文心 API使用</a></p>
+<p><a href="https://flowus.cn/3e3e9dd0-c678-409d-b203-712f96e42c6f">任务3：读取汽车问答数据</a></p>
+<p><a href="https://flowus.cn/fa9a8635-9be2-4154-b998-619195c06687">任务4：文本索引与答案检索</a></p>
+<p><a href="https://flowus.cn/234fa273-4c69-45de-9e86-59c956541406">任务5：文本嵌入与向量检索</a></p>
+<p><a href="https://flowus.cn/ba10cc72-77f5-41f9-8499-5d52a7d4a535">任务6：文本多路召回与重排序</a></p>
+<p><a href="https://flowus.cn/ae310880-2cec-42d6-8aff-b22cc071d81c">任务7：文本问答Promopt优化</a></p>
+<p><a href="https://flowus.cn/f2186b72-a199-4a00-9f0b-fb7243c056ba">任务8：问答意图识别（未完成）</a></p>
+<p><a href="https://flowus.cn/70f5bcbd-9bb0-4e70-9db3-79d22f463eae">任务9：问答关键词提取（未完成）</a></p>
+<p><a href="https://flowus.cn/1f933e88-8fe0-4704-8aa1-189e7e0ee53a">任务10：扩展词与扩展查询（未完成）</a></p>
+<p><a href="https://flowus.cn/14a57f52-34e6-4ec9-8bc2-a897e01a872b">任务11：本地微调ChatGLM（未完成）</a></p>
+<hr>
+<h2 id="资料学习">资料学习</h2>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Kaggle知识点：zarr分块和压缩的矩阵格式]]></title>
+        <id>https://lab.moguw.top/post/Kaggle知识点：zarr分块和压缩的矩阵格式/</id>
+        <link href="https://lab.moguw.top/post/Kaggle知识点：zarr分块和压缩的矩阵格式/">
+        </link>
+        <updated>2024-02-28T01:09:50.000Z</updated>
+        <content type="html"><![CDATA[<blockquote>
+<p>Zarr是一种高效的矩阵存储格式，它通过分块和压缩技术来优化内存和磁盘空间使用，适用于大数据处理和分析。</p>
+</blockquote>
+<h2 id="为什么使用zarr">为什么使用zarr ？</h2>
+<p><strong>在处理太大无法一次性加载到内存的NumPy数组时</strong>，可以使用分块处理，可以透明地处理，也可以仅从磁盘逐个加载一个块。无论哪种方式，您都需要以某种方式将数组存储在磁盘上。</p>
+<ol>
+<li>
+<p>mmap()，通过 <code>numpy.memmap()</code> API，让您透明地将磁盘上的文件视为全部在内存中。</p>
+</li>
+<li>
+<p>Zarr和HDF5，一对相似的存储格式，让您按需加载和存储数组的压缩块。</p>
+</li>
+</ol>
+<h3 id="缓存机制的优点">缓存机制的优点</h3>
+<ol start="3">
+<li>
+<p><strong>提高读取速度：</strong> 当数据首次从磁盘读取到内存时，会存储一份副本到操作系统的缓存中。如果稍后再次读取相同的数据，操作系统会直接从缓存中获取，避免了再次从磁盘读取的时间消耗，因此读取速度大大加快。</p>
+</li>
+<li>
+<p><strong>减少磁盘访问：</strong> 由于数据在缓存中已经存在，所以避免了频繁访问磁盘的需要。这有助于减少对磁盘的读写操作，降低了磁盘的负载和磁盘的磨损，延长了硬件的使用寿命。</p>
+</li>
+<li>
+<p><strong>提高系统响应性：</strong> 缓存可以加速数据访问，使得系统更加响应快速。对于需要频繁访问磁盘的应用程序，通过减少磁盘I/O操作，可以使系统更加流畅和高效。</p>
+</li>
+<li>
+<p><strong>自动管理内存：</strong> 缓存系统会自动管理缓存中的数据，当系统需要释放内存以供其他用途时，会根据一定的策略清理不再使用的数据，以确保系统的内存使用效率和性能。</p>
+</li>
+</ol>
+]]></content>
+    </entry>
+</feed>

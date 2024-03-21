@@ -1,0 +1,283 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>深度学习编译（转载学习） | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    深度学习编译（转载学习）
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-10-31 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/J6XgBsQ_w8f/" class="post-tags">
+                            # 训练
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <p>原文链接：https://lulaoshi.info/deep-learning/train-speedup/deep-learning-compile.html</p>
+<p>​	深度学习编译已经成为当前各个主流深度学习的标配。例如，PyTorch 2.x的 <code>torch.compile</code>，TensorFlow 2.x 的 <code>tf.function</code>。深度学习编译的流行主要因为两种原因：</p>
+<ul>
+<li>深度学习编译可明显提升训练和推理速度：深度学习编译过程进行了大量优化，优化过后的程序能更好地运行在硬件上。</li>
+<li>深度学习加速器硬件层出不穷，上层软件为每种加速器硬件都进行编程适配的工作量太大，深度学习编译器是一种中间层，尽量减少上层软件开发的成本。</li>
+</ul>
+<h2 id="深度学习编译器">深度学习编译器</h2>
+<p>​	在整个深度学习软硬件栈中，深度学习编译器处于深度学习框架和底层硬件之间，它提供了一种中间层，可以覆盖不同的加速器硬件。下图中，Graph Level和Kernel Level都是深度学习编译器所希望做的事情。</p>
+<figure data-type="image" tabindex="1"><img src="https://s2.loli.net/2023/10/31/CJxKDhbRzvMtkrV.png" alt="图片.png" loading="lazy"></figure>
+<p>​	如果对软硬件栈不熟悉，这张图给人感觉比较抽象，我们仍然不是很了解深度学习编译器到底做了什么。这里给出一些具体的例子。</p>
+<h2 id="ir中间表示">IR：中间表示</h2>
+<p>​	深度学习编译器领域出现最多的一个词就是IR，英文全称是Intermediate Representation（中间表示）。IR这个词给人一种高大上的感觉，实际上IR类似下面的代码：</p>
+<pre><code class="language-python">%add_float_.52 (x.53: f32[], y.54: f32[]) -&gt; f32[] {
+  %x.53 = f32[] parameter(0)
+  %y.54 = f32[] parameter(1)
+  ROOT %add.55 = f32[] add(f32[] %x.53, f32[] %y.54)
+}
+</code></pre>
+<p>​	这是一段Google深度学习编译器XLA编译出来的IR，这种IR是Google自己定义的一套特定的格式，Google称其为HLO（High Level  Optimizer）。咋一看有点像汇编，但又不是汇编；有点像编程语言的函数，但又貌似比编程语言的函数复杂。IR确实就是介于编程语言和汇编之间的东西。仔细看这个代码，它要做的事情是对两个float32数值进行加法运算。可以认为“函数名”是“add_float_.52”，“函数输入”是“x.53”和“y.54”，“函数”最后返回的是两个输入的加法。</p>
+<p>​	IR的这种形式其实叫做SSA（Static Single  Assignment，静态单赋值）。静态单赋值指的是：每个变量都有且只有一个赋值语句。IR并不是因为深度学习才出现的，早在深度学习兴起之前，编译器领域就已经开始广泛采用了，最著名的当属LLVM。LLVM是一种介于不同上层语言和不同下层的编译器。就算有不同的上层语言（C/C++、Fortran、Haskell、Julia...），LLVM都可以把程序员所写的上层语言代码转化成IR。因为虽然上层语言不一样，但是程序员所想表达的逻辑是近乎相同的，这些业务逻辑可以被表示成IR，IR再被编译到不同的硬件上。</p>
+<figure data-type="image" tabindex="2"><img src="https://s2.loli.net/2023/11/01/TBGFwoWDKqXbQZr.png" alt="LLVM架构图" loading="lazy"></figure>
+<p>一个LLVM的IR如下所示，这段代码进行了乘法和加法的计算。</p>
+<pre><code class="language-python">%e = mul i32 %a, %b
+%c = add i32 %a, %b
+</code></pre>
+<p>​	IR再经过多次优化，可以被编译成不同的硬件平台上的可执行代码。不同的优化被称为Pass。最后，硬件厂商可以将自己的加法和乘法计算实现贡献到LLVM社区，LLVM就可以实现可执行文件的编译。</p>
+<h2 id="前端优化从计算图到ir">前端优化：从计算图到IR</h2>
+<p>​	在深度学习领域，通常使用计算图来表示计算，深度学习编译器将计算图转化为优化过的IR，并进一步转化为高性能的程序。下图使用Google JAX先生成（a）的计算图，再经过一系列优化，生成（b）和（c）的HLO IR表示。</p>
+<figure data-type="image" tabindex="3"><img src="https://s2.loli.net/2023/11/01/8r2ykhzfiH9XUqK.png" alt="使用Google JAX先生成（a）的计算图，再经过一系列优化，生成（b）和（c）的HLO IR表示" loading="lazy"></figure>
+<p>（a）的计算图进行的是：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>y</mi><mo>=</mo><mi>W</mi><mi>X</mi><mo>+</mo><mi>b</mi><mspace linebreak="newline"></mspace><mi>z</mi><mo>=</mo><mi>S</mi><mi>e</mi><mi>L</mi><mi>U</mi><mo>(</mo><mi>y</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">y=WX+b \\z=SeLU(y)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">b</span></span><span class="mspace newline"></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault">e</span><span class="mord mathdefault">L</span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span></span></p>
+<p>（b）是将这个计算图转化成的HLO IR，此时的IR还未进行任何优化。</p>
+<p>（c）是对这个计算图进行了优化，这里使用了算子融合技术，将矩阵乘法和激活函数的计算SeLU融合到灰色方框的计算。</p>
+<p>​	前端优化主要关注计算图整体拓扑结构，而不关心算子的具体实现，主要包括：对算子进行融合、消除、化简等操作，使计算图的计算和存储开销最小。</p>
+<p>​	前端优化通常是将用户定义的计算图转化为图级别（Graph Level）的IR，这些优化通常有几十甚至上百个，也就是说一个初始的计算图要经过几十种优化，才能得到一个优化后的IR。这些优化主要有几类：</p>
+<ul>
+<li>相邻算子算子融合（Operator Fusion）等</li>
+<li>死代码消除（Dead Code Elimination，DCE）</li>
+</ul>
+<p>优化的收益很大，其中收益最大的优化是相邻间算子融合。算子融合可以减少算子的个数。如下图所示，原本需要3个GPU Kernel，在GPU上启动3次核函数，调用多次内存读写，现在经过算子融合之后，合并为1个GPU Kernel，调用更少次数的内存读写。深度学习里使用最多的是 <code>Conv + ReLU + BatchNorm</code> 和 <code>GEMM + BiasAdd + ReLU</code> 这两类融合。</p>
+<figure data-type="image" tabindex="4"><img src="https://s2.loli.net/2023/11/01/D71ObqLwXU6Rf2G.png" alt="算子融合在GPU上的实现：将3个GPU Kernel融合为1个Kernel" loading="lazy"></figure>
+<p>另外两个经常用到的优化是死代码消除（Dead Code Elimination，DCE）和公共子表达式消除（Common  Subexpression  Elimination，CSE）。DCE就是消除用户代码中写的，但实际计算中根本没有使用到的代码。CSE是把多个相同的公共表达式提出取来进行复用。例如：</p>
+<pre><code class="language-text">a = b * c + g
+d = b * c + e
+</code></pre>
+<p><code>b * c</code>是公共的表达式，可以提取出来，不需要计算2次：</p>
+<pre><code class="language-text">temp = b * c
+a = temp + g
+d = temp + e
+</code></pre>
+<h2 id="后端优化图ir到可执行文件">后端优化：图IR到可执行文件</h2>
+<p>后端优化关注IR图中每个算子节点的内部具体实现，针对不同的硬件使得性能达到最优。这些优化重点关心每个节点的输入，输出，以及计算的逻辑。</p>
+<p>相比前端优化，后端优化更偏向硬件和芯片，需要开发者非常熟悉芯片设计架构。以卷积为例，卷积的实现有很多种算法，在什么场景（输入、输出）下使用什么算法，以取得最优的性能？</p>
+<p>一种做法是提供常用算子库：NVIDIA的cuBLAS和cuDNN，Intel的oneAPI。这些算子库中的卷积、矩阵乘法等常用算子经过了高度手工优化，针对某种特定的输入输出，它会选择最优的算法。当然，这种做法非常耗费人力，只有大厂才有实力；而且移植性差，NVIDIA的算子库无法应用给Intel。</p>
+<p>另一种方法是自动化生成算子。很多顶级研究团队都在专注于自动化代码生成，发表了很多论文，比如TVM、MindSpore等。不过，自动化生成的理想很丰满，但在一些特定场景仍然无法跟手工优化的算子相比。</p>
+<h2 id="框架支持">框架支持</h2>
+<p>深度学习编译的技术确实很复杂。但对于用户来说，可以不用深究，深度学习框架已经帮我们做好了，只需要加一行代码就行。比如：将<code>torch.compile</code> 和 <code>tf.function</code>包裹到训练的一个step函数上就好了。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/混合精度训练/" class="post-title gt-a-link">
+                    混合精度训练
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

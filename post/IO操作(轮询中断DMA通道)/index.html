@@ -1,0 +1,285 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>I/O操作：轮询、中断、DMA、通道 | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    I/O操作：轮询、中断、DMA、通道
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2024-01-01 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/Dbm3JDlyR/" class="post-tags">
+                            # 操作系统
+                        </a>
+                    
+                        <a href="https://lab.moguw.top/tag/pHzfg_0RDP/" class="post-tags">
+                            # 中断
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <p>I/O 设备是计算机的重要组成部分，介于处理器与 I/O 设备交互的复杂性，I/O 操作一直是高级语言开发者比较难掌握的一个技术点。<br>
+因为高级语言对 I/O 操作的封装基于操作系统提供的系统函数，而这些系统函数的调用方式又与其硬件层的结构与工作机制息息相关，所以想要彻底搞懂 I/O 操作的那些函数，必须对其基于的底层设备的工作方式有一定的了解。</p>
+<!-- more -->
+<h3 id="轮询方式的-io-操作">轮询方式的 I/O 操作</h3>
+<p>对I/O设备的程序轮询的方式，是早期的计算机系统对I/O设备的一种管理方式。它定时对各种设备轮流询问一遍有无处理要求。轮流询问之后，有要求的，则加以处理。在处理I/O设备的要求之后，处理机返回继续工作。尽管轮询需要时间，但轮询不比I/O设备的速度要快得多，所以一般不会发生不能及时处理的问题，I/O操作的时效性是可以保证的。但是处理器的速度再快，能处理的输入输出设备的数量也是有一定限度的。而且，程序轮询会占据CPU相当一部分处理时间，因此程序轮询是一种效率较低的方式，在现代计算机系统中已很少应用。</p>
+<h3 id="中断方式的-io-操作">中断方式的 I/O 操作</h3>
+<p>处理器与 I/O 设备间几个数量级的速度差异是 I/O 操作中存在的重要矛盾，是设备管理要解决的一个重要问题。为了提高整体效率，减少在程序直接控制 I/O 设备与处理器进行数据交互是很必要的。在I/O设备中断方式下，中央处理器与I/O设备之间数据的传输步骤如下：</p>
+<ol>
+<li>在某个进程需要数据时，发出指令启动输入输出设备准备数据</li>
+<li>在进程发出指令启动设备之后，该进程放弃处理器，并由操作系统将进程置为阻塞状态，等待相关I/O操作完成。此时，进程调度程序会调度其他就绪进程使用处理器。</li>
+<li>当I/O操作完成时，输入输出设备控制器通过中断请求线向处理器发出中断信号，处理器收到中断信号之后，转向预先设计好的中断处理程序，对数据传送工作进行相应的处理。</li>
+<li>数据准备完成后，OS将阻塞的进程唤醒，将其转入就绪状态。在随后的某个时刻，进程调度程序会选中该进程继续工作。</li>
+</ol>
+<p><strong>中断方式的优缺点</strong></p>
+<p>I/O设备中断方式使处理器的利用率提高，且能<strong>支持多道程序和I/O设备的并行操作</strong>。</p>
+<p>不过，中断方式仍然存在一些问题。首先，现代计算机系统通常配置有各种各样的输入输出设备。如果这些I/O设备都同过中断处理方式进行并行操作，那么<strong>中断次数的急剧增加会造成CPU无法响应中断和出现数据丢失现象</strong>。</p>
+<p>其次，如果I/O控制器的数据缓冲区比较小，在缓冲区装满数据之后将会发生中断。那么，在数据传送过程中，<strong>发生中断的机会较多，这将耗去大量的CPU处理时间</strong>。</p>
+<h3 id="dma-方式的io-操作">DMA 方式的I/O 操作</h3>
+<p><strong>直接内存存取技术</strong>是指，数据在内存与I/O设备间直接进行成块传输。该技术基于 DMA 设备，将 CPU 从简单的数据传输工作中解放了出来。</p>
+<p>DMA有两个技术特征，首先是<strong>直接传送</strong>，其次是<strong>块传送</strong>。所谓直接传送，即在内存与IO设备间传送一个数据块的过程中，不需要CPU的任何中间干涉，只需要CPU在过程开始时向设备发出“传送块数据”的命令，然后通过中断来得知过程是否结束和下次操作是否准备就绪，当然这里的中断是 DMA 设备向 CPU 发出的而不是设备控制器。</p>
+<p></p>
+<p><strong>DMA工作过程：</strong></p>
+<ol>
+<li>当进程要求设备输入数据时，CPU把准备存放输入数据的内存起始地址以及要传送的字节数分别送入DMA控制器中的内存地址寄存器和传送字节计数器。</li>
+<li>发出数据传输要求的进行进入等待状态。此时正在执行的CPU指令被暂时挂起，进程进入阻塞状态。进程调度程序调度其他进程占据CPU。</li>
+<li>输入设备不断地窃取CPU工作周期（或者说与 CPU 争取内存总线），将数据缓冲寄存器中的数据源源不断地写入内存，直到所要求的字节全部传送完毕</li>
+<li>DMA控制器在传送完所有字节时，通过中断请求线发出中断信号。CPU在接收到中断信号后，转入中断处理程序进行后续处理。</li>
+<li>中断处理结束后，CPU返回到被中断的进程中，或切换到新的进程上下文环境中，继续执行。</li>
+</ol>
+<p><strong>DMA与中断的区别</strong></p>
+<ul>
+<li>中断方式是在设备控制器的数据缓冲寄存器满之后发出中断，由设备控制器发出，要求CPU进行中断处理，而DMA方式则是在所要求传送的数据块全部传送结束时要求CPU 进行中断处理，由 DMA 设备发出。这就极大的减少了CPU进行中断处理的次数。</li>
+<li>中断方式的数据传送是在中断处理时由CPU控制完成的，而DMA方式则是在DMA控制器的控制下，不经过CPU控制完成的。这就排除了CPU因并行设备过多而来不及处理以及因速度不匹配而造成数据丢失等现象。</li>
+</ul>
+<p><strong>DMA方式的优缺点</strong></p>
+<p>在DMA方式中，由于I/O设备直接同内存发生成块的数据交换，因此I/O效率比较高。由于DMA技术可以提高I/O效率，因此在现代计算机系统中，得到了广泛的应用。许多输入输出设备的控制器，特别是块设备的控制器，都支持DMA方式。</p>
+<p>通过上述分析可以看出，DMA控制器功能的强弱，是决定DMA效率的关键因素。DMA控制器需要为每次数据传送做大量的工作，数据传送单位的增大意味着传送次数的减少。另外，DMA方式窃取了时钟周期，因为其占据了访问内存的数据总线，CPU处理效率降低了，要想尽量少地窃取始终周期，就要设法提高DMA控制器的性能，这样可以较少地影响CPU处理效率。</p>
+<p>总的来说 DMA 是一种比较令人满意的处理方式，通过 DMA 设备的引入将 CPU 从繁重的 I/O 操作中解放了出来。CPU 只需要发送读取请求和获得处理结果，而不需要关注 I/O 操作的具体传输过程。</p>
+<h3 id="通道方式的-io">通道方式的 I/O</h3>
+<p>输入/输出通道是一个独立于CPU的，专门管理I/O的处理机，它控制设备与内存直接进行数据交换。它有自己的通道指令，这些通道指令由CPU启动，并在操作结束时向CPU发出中断信号。输入/输出通道控制是一种以内存为中心，实现设备和内存直接交换数据的控制方式。在通道方式中，数据的传送方向、存放数据的内存起始地址以及传送的数据块长度等都由通道来进行控制。另外，通道控制方式可以做到一个通道控制多台设备与内存进行数据交换。因而，通道方式进一步减轻了CPU的工作负担，增加了计算机系统的并行工作程度。</p>
+<p>按照信息交换方式和所连接的设备种类不同，通道可以分为以下三种类型：</p>
+<ol>
+<li>字节多路通道</li>
+</ol>
+<p>它适用于连接打印机、终端等低速或中速的I/O设备。这种通道以字节为单位交叉工作：当为一台设备传送一个字节后，立即转去为另一它设备传送一个字节。</p>
+<ol start="2">
+<li>选择通道</li>
+</ol>
+<p>它适用于连接磁盘、磁带等高速设备。这种通道以“组方式”工作，每次传送一批数据，传送速率很高，但在一段时间只能为一台设备服务。每当一个I/O请求处理完之后，就选择另一台设备并为其服务。</p>
+<ol start="3">
+<li>成组多路通道</li>
+</ol>
+<p>这种通道综合了字节多路通道分时工作和选择通道传输速率高的特点，其实质是：对通道程序采用多道程序设计技术，使得与通道连接的设备可以并行工作。</p>
+<p>在通道控制方式中，I/O设备控制器（常简称为I/O控制器）中没有传送字节计数器和内存地址寄存器，但多了通道设备控制器和指令执行部件。CPU只需发出启动指令，指出通道相应的操作和I/O设备，该指令就可启动通道并使该通道从内存中调出相应的通道指令执行。一旦CPU发出启动通道的指令，通道就开始工作。I/O通道控制I/O控制器工作，I/O控制器又控制I/O设备。这样，一个通道可以连接多个I/O控制器，而一个I/O控制器又可以连接若干台同类型的外部设备。由于通道和控制器的数量一般比设备数量要少，因此，如果连接不当，往往会导致出现“瓶颈”。故一般设备的连接采用交叉连接，这样做的好处是：</p>
+<p>① 提高系统的可靠性：当某条通路因控制器或通道故障而断开时，可使用其他通路。</p>
+<p>② 提高设备的并行性：对于同一个设备，当与它相连的某一条通路中的控制器或通道被占用时，可以选择另一条空闲通路，减少了设备因等待通路所需要花费的时间。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/深度学习代码规范/" class="post-title gt-a-link">
+                    深度学习代码规范
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

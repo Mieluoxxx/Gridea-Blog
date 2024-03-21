@@ -1,0 +1,305 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>混合精度训练 | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    混合精度训练
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-10-31 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/J6XgBsQ_w8f/" class="post-tags">
+                            # 训练
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <p>​	通常而言，神经网络训练的性能瓶颈通常在于GPU显存：一方面是单张GPU卡上可容纳的模型和数据量，另一方面是显存和计算单元的带宽和延迟有限。在Micikevicius et al.提出混合精度训练之前，深度学习模型都是在使用float32精度进行训练的，Micikevicius等人经过实验发现，可以使用更低的精度来训练神经网络，进而带来巨大速度收益。混合精度训练一般能够获得2-3倍的速度提升。</p>
+<p>低精度以及混合精度训练开始流行，以至于深刻影响了深度学习框架、GPU和神经网络加速器的设计。</p>
+<h2 id="精度">精度</h2>
+<p>计算机是二进制的，使用多个二进制位表示不同的数字。比如，int8使用8位二进制表示正数，float32（FP32，单精度）使用32位二进制表示浮点数，具体表示的方法类似于科学计数法，如下图所示。FP32总共32位，第一位是sign（符号位），表示正负数；后面八位是exponent，用来计算2exponent2^{exponent}2exponent；再后面八位是fraction。</p>
+<figure data-type="image" tabindex="1"><img src="https://s2.loli.net/2023/10/31/pXWS4DFLnNQUGZk.png" alt="FP32的数值表示" loading="lazy"></figure>
+<p>相比之下，更低精度的float16（FP16，半精度）的exponent和fraction位数更少，所能表示的数字范围也更小。</p>
+<figure data-type="image" tabindex="2"><img src="https://s2.loli.net/2023/10/31/P5rRWAJUaOZn1DB.png" alt="FP32 v.s. FP16" loading="lazy"></figure>
+<p>低精度带来的优势是：</p>
+<ul>
+<li>同样的GPU显存，可以容纳更大的参数量、更多的训练数据。FP16的占用的空间是FP32的一半，因此权重等参数所占用的内存也是原来的一半，节省下来的内存可以放更大的网络模型或者使用更多的数据进行训练。</li>
+<li>低精度的算力（FLOPS）可以做得更高。一些芯片可以设计很高的低精度计算单元，比如当前主流的神经网络加速芯片都有极高的FP16算力，FP32的算力相比FP16较低。</li>
+<li>单位时间内，计算单元访问GPU显存上的数据可以获得更高的速度。此外，针对分布式训练，特别是在大模型训练的过程中，通讯的开销制约了网络模型训练的整体性能，低精度意味着可以提升通讯性能，减少等待时间，加快数据的流通。</li>
+</ul>
+<p>低精度的缺点显而易见：能表示的数值范围有限。精度越低，数值范围越小。FP16的有效数据表示范围为[6.10×10−5,65504][6.10×10<sup>{−5},65504][6.10×10−5,65504]，FP32的有效数据表示范围为[1.4×10−45,1.7×1038][1.4×10</sup>{−45},1.7×10^{38}][1.4×10−45,1.7×1038]。可见FP16相比FP32的有效范围要窄很多，使用FP16替换FP32会出现上溢（Overflow）和下溢（Underflow）的情况。在深度学习中，需要计算网络模型中权重的梯度（一阶导数），梯度会比权重值更加小，往往容易出现下溢情况。</p>
+<p>Micikevicius等人发现神经网络训练没必要一直用FP32，可以适当使用FP16。这一发现也深刻影响了神经网络硬件和框架的设计。比如：</p>
+<ul>
+<li>深度学习框架均提供了低精度训练功能。</li>
+<li>NVIDIA在最新架构中考虑了不同的精度，华为的昇腾910处理器的算力主要集中在FP16[<a href="https://lulaoshi.info/deep-learning/train-speedup/mixed-precision.html#footnote2">2]</a>，Google的TPU设计了特殊的bfloat16格式。</li>
+</ul>
+<h2 id="混合精度训练">混合精度训练</h2>
+<p>混合精度训练的计算流程如下：</p>
+<ol>
+<li>参数以FP32存储；</li>
+<li>正向计算过程中，遇到FP16算子，需要把算子输入和参数从FP32转换成FP16进行计算；</li>
+<li>将Loss层设置为FP32进行计算；</li>
+<li>反向计算过程中，首先乘以Loss Scale值，避免反向梯度过小而产生下溢；</li>
+<li>FP16参数参与梯度计算，其结果将被转换回FP32；</li>
+<li>除以loss scale值，还原被放大的梯度；</li>
+<li>判断梯度是否存在溢出，如果溢出则跳过更新，否则优化器以FP32对原始参数进行更新。</li>
+</ol>
+<figure data-type="image" tabindex="3"><img src="https://s2.loli.net/2023/10/31/cUn5JL2AGoEK7DI.png" alt="混合精度训练流程" loading="lazy"></figure>
+<p>具体而言，混合精度训练使用了三个技术。</p>
+<h3 id="fp32模型权重">FP32模型权重</h3>
+<p>FP32 master copy of  weights。模型的权重使用FP32来表示，保证了数值准确性。在前向和反向计算时，先将FP32权重转化成FP16，同时还保留一份FP32的Master Copy。最后将梯度更新到Master Copy上。那么计算时可以获得FP16的速度提升，而权重这样重要的数据仍然以FP32的高精度来保存。</p>
+<figure data-type="image" tabindex="4"><img src="https://s2.loli.net/2023/10/31/DUGWeJ6S8hfN1cb.png" alt="模型的权重使用FP32，在前向和反向计算时，先将FP32权重转化成FP16，同时还保留一份FP32的Master Copy，最后将梯度更新到Master Copy上" loading="lazy"></figure>
+<h3 id="loss-scale">Loss Scale</h3>
+<p>​	如图所示，如果仅仅使用FP32训练，模型收敛得比较好，但是如果用了混合精度训练，会存在网络模型无法收敛的情况。原因是梯度的值太小，使用FP16表示会造成了数据下溢出（Underflow）的问题，导致模型不收敛，如图中灰色的部分。于是需要引入损失缩放（Loss Scaling）技术。</p>
+<figure data-type="image" tabindex="5"><img src="https://s2.loli.net/2023/11/02/qfJKbGdzSOgy4i2.png" alt="图片.png" loading="lazy"></figure>
+<p>loss scale有两种设置策略：</p>
+<ul>
+<li>loss scale固定值，比如在[8, 32000]之间；</li>
+<li>动态调整，先将loss scale初始化为65536，如果出现上溢或下溢，在loss scale值基础上适当增加或减少。</li>
+</ul>
+<p>​</p>
+<h3 id="高精度运算使用fp32">高精度运算使用FP32</h3>
+<p>​	在混合精度的模型训练过程中，使用FP16进行矩阵乘法运算，利用FP32来进行矩阵乘法中间的累加（accumulated），然后再将FP32的值转化为FP16进行存储。简单而言，就是利用FP16进行矩阵相乘，利用FP32来进行加法计算弥补丢失的精度。这样可以有效减少计算过程中的舍入误差，尽量减缓精度损失的问题。</p>
+<p>​	例如在Nvidia Volta 结构中带有Tensor Core，可以利用FP16混合精度来进行加速，还能保持精度。Tensor Core主要用于实现FP16的矩阵相乘，在利用FP16或者FP32进行累加和存储。在累加阶段能够使用FP32大幅减少混合精度训练的精度损失。</p>
+<figure data-type="image" tabindex="6"><img src="https://s2.loli.net/2023/11/02/bE4itKqFjwMlJXG.png" alt="图片.png" loading="lazy"></figure>
+<h2 id="框架支持">框架支持</h2>
+<p>目前主流的深度学习框架都支持了混合精度训练，其实对于用户来说主要就是要选择何种精度来进行计算。以PyTorch为例，其余代码基本没有差别，只是加了<code>torch.cuda.amp.GradScaler</code>和<code>torch.autocast</code>。<code>torch.cuda.amp.GradScaler</code>默认可以动态调整loss scale，<code>torch.autocast</code>自动为不同的算子选择合适的精度。</p>
+<p>更加精细的PyTorch混合精度训练方法可以参考PyTorch的<a href="https://pytorch.org/docs/stable/notes/amp_examples.html">文档</a>。</p>
+<pre><code class="language-python"># 创建模型和优化器
+model = Net().cuda()
+optimizer = optim.SGD(model.parameters(), ...)
+
+# 创建`torch.cuda.amp.GradScaler`
+scaler = GradScaler()
+
+for epoch in epochs:
+    for input, target in data:
+        optimizer.zero_grad()
+
+        # 增加`torch.autocast`，将必要的计算从FP32转换为FP16
+        with autocast(device_type='cuda', dtype=torch.float16):
+            output = model(input)
+            loss = loss_fn(output, target)
+
+        # Loss Scale
+        scaler.scale(loss).backward()
+
+        # 更新参数
+        scaler.step(optimizer)
+
+        # 更新scaler
+        scaler.update()
+
+</code></pre>
+<h2 id="参考文章">参考文章</h2>
+<p>https://lulaoshi.info/deep-learning/train-speedup/mixed-precision.html</p>
+<p>https://lulaoshi.info/deep-learning/train-speedup/mixed-precision.html</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/DES加密算法工作原理/" class="post-title gt-a-link">
+                    DES加密算法工作原理
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

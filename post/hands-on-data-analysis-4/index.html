@@ -1,0 +1,1533 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>动手学数据分析（四）数据可视化 | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    动手学数据分析（四）数据可视化
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2024-03-18 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/KSDWsRXiE/" class="post-tags">
+                            # 数据分析
+                        </a>
+                    
+                        <a href="https://lab.moguw.top/tag/5MsTgBTsKS/" class="post-tags">
+                            # Datawhale
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <pre><code class="language-python"># 导入基本库
+import numpy as np
+import pandas as pd
+</code></pre>
+<pre><code class="language-python">df = pd.read_csv('/kaggle/working/train_base.csv')
+</code></pre>
+<pre><code class="language-python">df['性别值'] = df['性别'].map({'male': 1, 'female': 2})
+df['登船港口'] = df['登船港口_labelEncode']
+df.drop('登船港口_labelEncode', axis=1, inplace=True)
+df['船票信息'] = df['船票信息_labelEncode']
+df.drop('船票信息_labelEncode', axis=1, inplace=True)
+df['年龄'] = df['年龄段']
+df.drop('年龄段', axis=1, inplace=True)
+df['性别'] = df['性别值']
+df.drop('性别值', axis=1, inplace=True)
+</code></pre>
+<pre><code class="language-python">print(df.columns)
+</code></pre>
+<pre><code>Index(['乘客ID', '是否幸存', '仓位等级', '姓名', '性别', '年龄', '兄弟姐妹个数', '父母子女个数', '船票信息',
+       '票价', '客舱', '登船港口'],
+      dtype='object')
+</code></pre>
+<pre><code class="language-python"># 定义要保留的列名称
+left_columns = ['乘客ID', '是否幸存', '仓位等级', '姓名']
+# 选择这些列创建train_left
+train_left = df[left_columns]
+# 剩下的列将自动被分配到train_right
+train_right = df.drop(left_columns, axis=1)
+</code></pre>
+<pre><code class="language-python">train_right
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2.0</td>
+      <td>4.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>41</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>374</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>710</th>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>0</td>
+      <td>5</td>
+      <td>378</td>
+      <td>29.1250</td>
+      <td>NaN</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>711</th>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>84</td>
+      <td>13.0000</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>712</th>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>13</td>
+      <td>30.0000</td>
+      <td>B42</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>713</th>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>9</td>
+      <td>30.0000</td>
+      <td>C148</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>714</th>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>372</td>
+      <td>7.7500</td>
+      <td>NaN</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+<p>715 rows × 8 columns</p>
+</div>
+<pre><code class="language-python">split_index = train_left.shape[0] // 2
+# 获取左/右上部分的DataFrame
+train_left_up = train_left.iloc[:split_index]
+train_right_up = train_right.iloc[:split_index]
+
+# 获取左/右下部分的DataFrame
+train_left_down = train_left.iloc[split_index:]
+train_right_down = train_right.iloc[split_index:]
+
+train_left_up.to_csv('/kaggle/working/train_left_up.csv')
+train_right_up.to_csv('/kaggle/working/train_right_up.csv')
+train_left_down.to_csv('/kaggle/working/train_left_down.csv')
+train_right_down.to_csv('/kaggle/working/train_right_down.csv')
+</code></pre>
+<pre><code class="language-python"># 使用concat方法：将数据train-left-up.csv和train-right-up.csv横向合并为一张表，并保存这张表为result_up
+list_up = [train_left_up,train_right_up]
+result_up = pd.concat(list_up,axis=1)
+result_up.head(-4)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>2.0</td>
+      <td>4.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>41</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>374</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>348</th>
+      <td>435</td>
+      <td>0</td>
+      <td>1</td>
+      <td>Silvey, Mr. William Baird</td>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>62</td>
+      <td>55.9000</td>
+      <td>E44</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>349</th>
+      <td>436</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Carter, Miss. Lucile Polk</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>2</td>
+      <td>27</td>
+      <td>120.0000</td>
+      <td>B96 B98</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>350</th>
+      <td>437</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Ford, Miss. Doolina Margaret "Daisy"</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>539</td>
+      <td>34.3750</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>351</th>
+      <td>438</td>
+      <td>1</td>
+      <td>2</td>
+      <td>Richards, Mrs. Sidney (Emily Hocking)</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>2</td>
+      <td>3</td>
+      <td>197</td>
+      <td>18.7500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>352</th>
+      <td>439</td>
+      <td>0</td>
+      <td>1</td>
+      <td>Fortune, Mr. Mark</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>1</td>
+      <td>4</td>
+      <td>79</td>
+      <td>263.0000</td>
+      <td>C23 C25 C27</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+<p>353 rows × 12 columns</p>
+</div>
+<pre><code class="language-python"># 使用concat方法：将train-left-down和train-right-down横向合并为一张表，并保存这张表为result_down。然后将上边的result_up和result_down纵向合并为result
+list_down = [train_left_down,train_right_down]
+result_down = pd.concat(list_down, axis=1)
+result_down.head(-4)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>357</th>
+      <td>444</td>
+      <td>1</td>
+      <td>2</td>
+      <td>Reynaldo, Ms. Encarnacion</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>98</td>
+      <td>13.0000</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>358</th>
+      <td>446</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Dodge, Master. Washington</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0</td>
+      <td>2</td>
+      <td>234</td>
+      <td>81.8583</td>
+      <td>A34</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>359</th>
+      <td>447</td>
+      <td>1</td>
+      <td>2</td>
+      <td>Mellinger, Miss. Madeleine Violet</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>139</td>
+      <td>19.5000</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>360</th>
+      <td>448</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Seward, Mr. Frederic Kimber</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>38</td>
+      <td>26.5500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>361</th>
+      <td>449</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Baclini, Miss. Marie Catherine</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>2</td>
+      <td>1</td>
+      <td>161</td>
+      <td>19.2583</td>
+      <td>NaN</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>706</th>
+      <td>882</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Markun, Mr. Johann</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>321</td>
+      <td>7.8958</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>707</th>
+      <td>883</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Dahlberg, Miss. Gerda Ulrika</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>397</td>
+      <td>10.5167</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>708</th>
+      <td>884</td>
+      <td>0</td>
+      <td>2</td>
+      <td>Banfield, Mr. Frederick James</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>446</td>
+      <td>10.5000</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>709</th>
+      <td>885</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Sutehall, Mr. Henry Jr</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>516</td>
+      <td>7.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>710</th>
+      <td>886</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Rice, Mrs. William (Margaret Norton)</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>0</td>
+      <td>5</td>
+      <td>378</td>
+      <td>29.1250</td>
+      <td>NaN</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+<p>354 rows × 12 columns</p>
+</div>
+<pre><code class="language-python">result_up.shape, result_down.shape
+</code></pre>
+<pre><code>((357, 12), (358, 12))
+</code></pre>
+<pre><code class="language-python">result = pd.concat([result_up,result_down])
+result.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>2.0</td>
+      <td>4.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>41</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>374</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">result.to_csv('/kaggle/working/result.csv', index=False)
+</code></pre>
+<pre><code class="language-python"># 将完整的数据加载出来
+text = pd.read_csv('/kaggle/working/result.csv')
+text.head()
+# 代码写在这里
+unit_result=text.stack().head(20)
+unit_result.head()
+</code></pre>
+<pre><code>0  乘客ID                          1
+   是否幸存                          0
+   仓位等级                          3
+   姓名      Braund, Mr. Owen Harris
+   性别                          1.0
+dtype: object
+</code></pre>
+<pre><code class="language-python">unit_result.shape
+</code></pre>
+<pre><code>(20,)
+</code></pre>
+<pre><code class="language-python">unit_result.to_csv('/kaggle/working/unit_result.csv')
+test = pd.read_csv('/kaggle/working/unit_result.csv')
+test.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>Unnamed: 1</th>
+      <th>0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>乘客ID</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>是否幸存</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>仓位等级</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>姓名</td>
+      <td>Braund, Mr. Owen Harris</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>性别</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3 id="数据聚合与运算">数据聚合与运算</h3>
+<pre><code class="language-python">text = pd.read_csv('/kaggle/working/result.csv')
+text.head(3)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">text['是否幸存'].sum()
+</code></pre>
+<pre><code>290
+</code></pre>
+<pre><code class="language-python"># 计算泰坦尼克号男性与女性的平均票价
+df = text['票价'].groupby(text['性别'])
+means = df.mean()
+means
+</code></pre>
+<pre><code>性别
+1.0    27.268836
+2.0    47.582759
+Name: 票价, dtype: float64
+</code></pre>
+<pre><code class="language-python"># 统计泰坦尼克号中男女的存活人数
+survived_sex = text['是否幸存'].groupby(text['性别']).sum()
+survived_sex.head()
+</code></pre>
+<pre><code>性别
+1.0     93
+2.0    197
+Name: 是否幸存, dtype: int64
+</code></pre>
+<pre><code class="language-python">text['是否幸存'].sum()
+</code></pre>
+<pre><code>290
+</code></pre>
+<pre><code class="language-python">survived_pclass = text['是否幸存'].groupby(text['仓位等级'])
+survived_pclass.sum()
+</code></pre>
+<pre><code>仓位等级
+0      0
+1    122
+2     83
+3     85
+Name: 是否幸存, dtype: int64
+</code></pre>
+<pre><code class="language-python">text.groupby('性别').agg({'票价': 'mean', '仓位等级': 'count'}).rename(columns=
+                            {'票价': 'mean_fare', '仓位等级': 'count_pclass'})
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mean_fare</th>
+      <th>count_pclass</th>
+    </tr>
+    <tr>
+      <th>性别</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1.0</th>
+      <td>27.268836</td>
+      <td>453</td>
+    </tr>
+    <tr>
+      <th>2.0</th>
+      <td>47.582759</td>
+      <td>261</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 统计在不同等级的票中的不同年龄的船票花费的平均值
+text.groupby(['票价','年龄'])['票价'].mean().head(3)
+</code></pre>
+<pre><code>票价   年龄 
+0.0  1.0    0.0
+     2.0    0.0
+     3.0    0.0
+Name: 票价, dtype: float64
+</code></pre>
+<pre><code class="language-python">result = pd.merge(means,survived_sex,on='性别')
+result
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>票价</th>
+      <th>是否幸存</th>
+    </tr>
+    <tr>
+      <th>性别</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1.0</th>
+      <td>27.268836</td>
+      <td>93</td>
+    </tr>
+    <tr>
+      <th>2.0</th>
+      <td>47.582759</td>
+      <td>197</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python">result.to_csv('/kaggle/working/sex_fare_survived.csv')
+</code></pre>
+<pre><code class="language-python"># 得出不同年龄的总的存活人数，然后找出存活人数最多的年龄段，最后计算存活人数最高的存活率（存活人数/总人数）
+#不同年龄的存活人数
+survived_age = text['是否幸存'].groupby(text['年龄']).sum()
+survived_age.head()
+</code></pre>
+<pre><code>年龄
+1.0    42
+2.0    56
+3.0    50
+4.0    70
+5.0    50
+Name: 是否幸存, dtype: int64
+</code></pre>
+<pre><code class="language-python">#找出最大值的年龄段
+survived_age[survived_age.values==survived_age.max()]
+</code></pre>
+<pre><code>年龄
+4.0    70
+Name: 是否幸存, dtype: int64
+</code></pre>
+<pre><code class="language-python">_sum = text['是否幸存'].sum()
+print(_sum)
+</code></pre>
+<pre><code>290
+</code></pre>
+<pre><code class="language-python"># 首先计算总人数
+_sum = text['是否幸存'].sum()
+print(&quot;sum of person:&quot;+str(_sum))
+precetn =survived_age.max()/_sum
+print(&quot;最大存活率：&quot;+str(precetn))
+</code></pre>
+<pre><code>sum of person:290
+最大存活率：0.2413793103448276
+</code></pre>
+<pre><code class="language-python">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+</code></pre>
+<pre><code class="language-python">text = pd.read_csv('/kaggle/working/result.csv')
+text.head()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>乘客ID</th>
+      <th>是否幸存</th>
+      <th>仓位等级</th>
+      <th>姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>兄弟姐妹个数</th>
+      <th>父母子女个数</th>
+      <th>船票信息</th>
+      <th>票价</th>
+      <th>客舱</th>
+      <th>登船港口</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>409</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>2.0</td>
+      <td>5.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>472</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>533</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>2.0</td>
+      <td>4.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>41</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>374</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<pre><code class="language-python"># 可视化展示泰坦尼克号数据集中男女中生存人数分布情况
+sex = text.groupby('性别')['是否幸存'].sum()
+sex.plot.bar()
+plt.title('survived_count')
+plt.show()
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_89_0.png" alt="png" loading="lazy"><br>
+​</p>
+<pre><code class="language-python"># 可视化展示泰坦尼克号数据集中男女中生存人与死亡人数的比例图
+text.groupby(['性别','是否幸存'])['是否幸存'].count().unstack().plot(kind='bar',stacked='True')
+plt.title('survived_count')
+plt.ylabel('count')
+</code></pre>
+<pre><code>Text(0, 0.5, 'count')
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_90_1.png" alt="png" loading="lazy"><br>
+​</p>
+<pre><code class="language-python"># 计算不同票价中生存与死亡人数 1表示生存，0表示死亡
+fare_sur = text.groupby(['票价'])['是否幸存'].value_counts().sort_values(ascending=False)
+fare_sur
+</code></pre>
+<pre><code>票价       是否幸存
+13.0000  0       26
+8.0500   0       24
+7.8958   0       22
+10.5000  0       15
+13.0000  1       15
+                 ..
+7.7333   1        1
+27.0000  0        1
+         1        1
+27.7208  1        1
+24.0000  1        1
+Name: count, Length: 291, dtype: int64
+</code></pre>
+<pre><code class="language-python"># 排序后绘折线图
+fig = plt.figure(figsize=(20, 18))
+fare_sur.plot(grid=True)
+plt.legend()
+plt.show()
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_92_0.png" alt="png" loading="lazy"><br>
+​</p>
+<pre><code class="language-python"># 排序前绘折线图
+fare_sur1 = text.groupby(['票价'])['是否幸存'].value_counts()
+fare_sur1
+</code></pre>
+<pre><code>票价        是否幸存
+0.0000    0       7
+          1       1
+4.0125    0       1
+5.0000    0       1
+6.2375    0       1
+                 ..
+247.5208  1       1
+262.3750  1       2
+263.0000  0       2
+          1       2
+512.3292  1       3
+Name: count, Length: 291, dtype: int64
+</code></pre>
+<pre><code class="language-python">fig = plt.figure(figsize=(20, 18))
+fare_sur1.plot(grid=True)
+plt.legend()
+plt.show()
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_94_0.png" alt="png" loading="lazy"><br>
+​</p>
+<pre><code class="language-python"># 可视化展示泰坦尼克号数据集中不同仓位等级的人生存和死亡人员的分布情况。
+# 1表示生存，0表示死亡
+pclass_sur = text.groupby(['仓位等级'])['是否幸存'].value_counts()
+pclass_sur
+</code></pre>
+<pre><code>仓位等级  是否幸存
+0     0         1
+1     1       122
+      0        64
+2     0        90
+      1        83
+3     0       270
+      1        85
+Name: count, dtype: int64
+</code></pre>
+<pre><code class="language-python">import seaborn as sns
+sns.countplot(x=&quot;票价&quot;, hue=&quot;是否幸存&quot;, data=text)
+</code></pre>
+<pre><code>&lt;Axes: xlabel='票价', ylabel='count'&gt;
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_96_1.png" alt="png" loading="lazy"><br>
+​</p>
+<pre><code class="language-python"># 任务六：可视化展示泰坦尼克号数据集中不同年龄的人生存与死亡人数分布情况。
+facet = sns.FacetGrid(text, hue=&quot;是否幸存&quot;,aspect=3)
+facet.map(sns.kdeplot,'年龄',shade= True)
+facet.set(xlim=(0, text['年龄'].max()))
+facet.add_legend()
+</code></pre>
+<pre><code>&lt;seaborn.axisgrid.FacetGrid at 0x780204e70040&gt;
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_97_1.png" alt="png" loading="lazy"><br>
+​</p>
+<pre><code class="language-python"># 任务七：可视化展示泰坦尼克号数据集中不同仓位等级的人年龄分布情况。
+
+text['年龄'][text['仓位等级'] == 1].plot(kind='kde')
+text['年龄'][text['仓位等级'] == 2].plot(kind='kde')
+text['年龄'][text['仓位等级'] == 3].plot(kind='kde')
+plt.xlabel(&quot;age&quot;)
+plt.legend((1,2,3),loc=&quot;best&quot;)
+</code></pre>
+<pre><code>&lt;matplotlib.legend.Legend at 0x7802043f9210&gt;
+</code></pre>
+<p>​<br>
+<img src="notebookbdeb30e99b_files/notebookbdeb30e99b_98_1.png" alt="png" loading="lazy"><br>
+​</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/rust-base-5/" class="post-title gt-a-link">
+                    Rust简易入门（五）Borrowing借用&amp;&amp;Lifetime生命周期
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

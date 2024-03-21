@@ -1,0 +1,456 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Rust简易入门（三）流程控制与函数 | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Rust简易入门（三）流程控制与函数
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2024-02-25 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/XHu5IHVO6/" class="post-tags">
+                            # Rust
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <blockquote>
+<p>Rust的流程控制主要包括条件语句（if、else、else if）、循环语句（for、while）和跳转语句（break、continue、return）。这些语句使程序员能够根据特定的条件或循环执行代码块，从而实现各种复杂的逻辑控制。例如，if语句允许程序员根据条件执行代码，而for和while循环则用于重复执行代码块，直到满足特定的条件。</p>
+</blockquote>
+<h2 id="if流程控制与match模式匹配">if流程控制与match模式匹配</h2>
+<pre><code class="language-Rust">fn main() {
+    let age = 50;
+    if age &lt; 50 {
+        println!(&quot;你还年轻&quot;);
+    } else {
+        println!(&quot;你老了&quot;);
+    }
+    
+    let num = 90;
+    match num {
+        80..=89 =&gt; println!(&quot;80 .. =89&quot;),
+        90 =&gt; println!(&quot;90&quot;),
+        95|100 =&gt; println!(&quot;95 | 100&quot;),
+        _ =&gt; println!(&quot;some else&quot;)
+    }
+    
+}
+</code></pre>
+<h2 id="循环与break-continue以及与迭代的区别">循环与break continue以及与迭代的区别</h2>
+<pre><code class="language-Rust">fn main(){
+    // loop {
+    //     println!(&quot;Ctrl+C&quot;);
+    //     std::thread::sleep(std::time::Duration::from_secs(1));
+    // }
+    
+    'outer: loop {
+        println!(&quot;outer&quot;);
+        loop {
+            println!(&quot;inner&quot;);
+            break 'outer;
+        }
+    }
+    
+    // 循环的写法
+    let numbers = [1, 2, 3, 4, 5];
+    let mut for_numbers = Vec::new();
+    for &amp;number in numbers.iter() {
+        let item = number * number;
+        for_numbers.push(item);
+    }
+    println!(&quot;for : {:?}&quot;, for_numbers);
+    
+    // 迭代器的写法
+    let numbers = [1,2,3,4,5].to_vec();
+    let iter_number: Vec&lt;_&gt; = numbers.iter().map(|&amp;x| x*x).collect();
+    println!(&quot;for : {:?}&quot;, iter_number);
+}
+</code></pre>
+<h2 id="函数基础与copy值传递">函数基础与Copy值传递</h2>
+<p>函数的定义：在Rust中函数的关键字为<code>fn</code></p>
+<p>参数与返回值：函数可以接受零个或者多个参数，每个参数都需要指定类型，函数可以有返回值，使用 <code>→</code>指定返回值类型，若无返回值可以使用 <code>→()</code>或者省略</p>
+<p>如果数据类型实现Copy特质，则在函数传参时会实现Copy by value</p>
+<p>Struct、美剧、集合等并没有实现Copy特质，会实现move操作失去所有权</p>
+<pre><code class="language-Rust">fn add(x: i32, y: i32) -&gt; i32 {
+    x + y
+}
+
+fn change_i32(mut x: i32) {
+    x += 4;
+    println!(&quot;{x}&quot;);
+}
+
+fn modify_i32(x: &amp;mut i32){
+    *x += 5;
+}
+
+
+#[derive(Copy, Clone)]
+struct Point{
+    x: i32,
+    y: i32,
+}
+
+fn print_point(point: Point){
+    println!(&quot;point x {}&quot;, point.x);
+}
+
+fn main() {
+    let a = 1;
+    let b = 2;
+    let c = add(a, b);
+    println!(&quot;{c}&quot;);
+    
+    let mut x = 1;
+    change_i32(x);
+    println!(&quot;x {x}&quot;);
+    modify_i32(&amp;mut x);
+    println!(&quot;x {x}&quot;);
+    
+    let s = Point{x: 1, y: 2};
+    print_point(s); // move
+    println!(&quot;point y {}&quot;, s.y);
+}
+
+</code></pre>
+<h2 id="函数值参数传递-不可变借用参数传递-可变借用参数传递">函数值参数传递、不可变借用参数传递、可变借用参数传递</h2>
+<pre><code class="language-Rust">fn move_func(p1: i32, p2: String) {
+    println!(&quot;p1 is {}&quot;, p1);
+    println!(&quot;p2 is {}&quot;, p2);
+}
+
+fn print_value(value: &amp;i32) {
+    println!(&quot;{}&quot;, value);
+}
+
+fn string_func_borrow(s: &amp;String) {
+    println!(&quot;{}&quot;, (*s).to_uppercase());
+}
+
+#[derive(Debug)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn modify_point(point: &amp;mut Point) {
+    (*point).x += 2;
+    point.y += 2;
+}
+
+fn main() {
+    let n = 12;
+    let s = String::from(&quot;00&quot;);
+    move_func(n, s);
+    println!(&quot;{}&quot;, n);
+    
+    let s = String::from(&quot;oo&quot;);
+    print_value(&amp;n);
+    print_value(&amp;n);
+    string_func_borrow(&amp;s);
+    println!(&quot;s is {}&quot;, s);
+    
+    let mut p = Point{x: 0, y: 0};
+    println!(&quot;{:?}&quot;, p);
+    modify_point(&amp;mut p);
+    println!(&quot;{:?}&quot;, p);
+}
+</code></pre>
+<h2 id="函数返回值与所有权机制">函数返回值与所有权机制</h2>
+<p>函数的返回值分为：返回值类型、返回引用类型</p>
+<ol>
+<li>返回值类型 Copy与 Non-Copy</li>
+</ol>
+<p>都可以返回，Non-Copy分配在堆上</p>
+<p>返回Copy类型的值通常具有更好的性能，Copy类型的值是通过复制来进行返回，不涉及堆上内存的分配和释放，通常是在栈上分配</p>
+<ol start="2">
+<li>返回引用</li>
+</ol>
+<p>在只有传入一个引用参数且只有一个返回引用时，生命周期不需要声明</p>
+<p>其他状况需要标注生命周期</p>
+<p>慎用 <code>'static</code></p>
+<pre><code class="language-Rust">fn func_copy_back() -&gt; i32 {
+    let n = 53;
+    n
+}
+
+fn func_non_copy_back() -&gt; String { // 栈上分配
+    let s = String::from(&quot;hello&quot;);
+    s
+}
+
+fn get_mess(mark: i32) -&gt; &amp;'static str {
+    if mark == 0 {
+        &quot;😀&quot;
+    } else {
+        &quot;😧&quot;
+    }
+}
+
+fn main(){
+    let i = func_copy_back();
+    println!(&quot;{i}&quot;);
+    let s = func_non_copy_back();
+    println!(&quot;{s}&quot;);
+    
+    let face = get_mess(i);
+    println!(&quot;{face}&quot;);
+}
+</code></pre>
+<h2 id="高阶函数-函数作为参数与返回值">高阶函数 函数作为参数与返回值</h2>
+<p>高阶函数：Rust允许使用高阶函数，即函数可以作为参数传递给其他函数，或者函数可以返回其他函数</p>
+<p>高阶函数是函数式编成的重要特性</p>
+<ol start="3">
+<li>
+<p>map函数：<code>map</code>函数可以用于对一个集合中的每个元素应用一个函数，并返回包含结果的新集合</p>
+</li>
+<li>
+<p>filter函数：<code>filter</code>函数用于过滤集合中的元素，根据一个谓词函数的返回值</p>
+</li>
+<li>
+<p>fold函数：<code>fold</code>函数（有时也称为<code>reduce</code>）可以用于迭代集合的每个元素，并将它们累积到一个单一结果中</p>
+</li>
+</ol>
+<pre><code class="language-Rust">fn func_twice(f: fn(i32) -&gt; i32, x: i32) -&gt; i32 {
+    f(f(x))
+} 
+
+fn mul(x: i32) -&gt; i32 {
+    x * x
+}
+
+fn add(x: i32) -&gt; i32 {
+    x + 10
+}
+
+fn main() {
+    let result = func_twice(mul, 3);
+    println!(&quot;{result}&quot;);
+    let result2 = func_twice(add, 3);
+    println!(&quot;{result2}&quot;);
+    
+    let numbers = vec![1,2,3,4,5,6,7];
+    let res: Vec&lt;_&gt; = numbers.iter().map(|&amp;x| x+x).collect();
+    println!(&quot;{:?}&quot;, res);
+    
+    // ref ref_mut move
+    let evens = numbers
+        .into_iter()
+        .filter(|&amp;x| x%2==0)
+        .collect::&lt;Vec&lt;_&gt;&gt;();
+    println!(&quot;{:?}&quot;, evens);
+    
+    let numbers = vec![1,2,3,4,5,6,7];
+    let sum = numbers.iter().fold(0, |acc, &amp;x| acc+x);
+    println!(&quot;{sum}&quot;);
+}
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/rust-base-2/" class="post-title gt-a-link">
+                    Rust简易入门（二）Ownership与结构体、枚举
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

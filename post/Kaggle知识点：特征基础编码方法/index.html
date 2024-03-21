@@ -1,0 +1,598 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Kaggle知识点：特征基础编码方法 | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Kaggle知识点：特征基础编码方法
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2024-02-03 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/aRj5UB0Z5/" class="post-tags">
+                            # kaggle
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <blockquote>
+<p>特征基础编码（Feature-based Encoding）旨在从原始数据中提取出有意义且易于处理的特征，以便于计算机进行进一步的分析和处理。</p>
+</blockquote>
+<h2 id="缺失值填充">缺失值填充</h2>
+<p>缺失值是数据分析中常见的问题，指的是数据集中某些变量的取值缺失或未知。缺失值可能由于多种原因产生，包括数据收集过程中的错误、设备故障、被调查者拒绝提供信息等。</p>
+<p>处理缺失值的主要目标是尽量保留数据的完整性和可用性，同时不引入过多的偏差。常见的填充逻辑包括：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>数值变量</th>
+<th>分类变量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>用均值或中位数替换缺失值</td>
+<td>√</td>
+<td>×</td>
+</tr>
+<tr>
+<td>用指定的任意数值替换缺失值</td>
+<td>√</td>
+<td>×</td>
+</tr>
+<tr>
+<td>用分布的尾部值替换缺失值</td>
+<td>√</td>
+<td>×</td>
+</tr>
+<tr>
+<td>用最频繁的类别值或指定的任意类别值替换缺失值</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>从变量中随机抽取值替换缺失值</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>添加一个二元变量来指示缺失值</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>删除数据集中包含缺失值的观测</td>
+<td>√</td>
+<td>√</td>
+</tr>
+</tbody>
+</table>
+<p>不是所有模型都能处理缺失值，但有些模型能够在训练过程中直接处理缺失值，包括：</p>
+<ul>
+<li>
+<p>决策树模型（如随机森林、梯度提升树）：这些模型可以自然地处理缺失值，因为它们在决策过程中只需考虑已知特征的信息。</p>
+</li>
+<li>
+<p>K近邻算法：K近邻算法的基本原理是根据数据点的相似性进行预测，对于含有缺失值的数据，K近邻算法能够利用其他特征值相似的样本进行预测。</p>
+</li>
+<li>
+<p>神经网络模型：神经网络模型可以通过适当的数据处理和网络架构设计来处理缺失值，例如使用特殊的填充层或者在训练过程中对缺失值进行处理。</p>
+</li>
+</ul>
+<h2 id="类别编码">类别编码</h2>
+<p>类别编码是将分类变量转换为模型可接受的数值形式的过程，以便机器学习算法能够有效地处理它们。在进行类别编码之前，首先需要识别数据中的分类变量类型，然后选择合适的编码方法进行转换。需要注意的是，不同的类别编码方法可能会重复信息，甚至可能导致维度爆炸，因此选择合适的编码方法至关重要。</p>
+<p>在识别类别类型时，主要有两种情况：</p>
+<ul>
+<li>
+<p>名义型（Nominal）变量：名义型变量是没有顺序或等级关系的分类变量，例如颜色、城市等。对于名义型变量，通常使用独热编码（One-Hot Encoding）等方法进行转换。</p>
+</li>
+<li>
+<p>有序型（Ordinal）变量：有序型变量是具有顺序或等级关系的分类变量，例如教育程度（小学、初中、高中等）。对于有序型变量，可以使用序数编码（Ordinal Encoding）等方法进行转换。</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>单调编码</th>
+<th>适用回归</th>
+<th>适用二元分类</th>
+<th>适用多类分类</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OneHotEncoder</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>从每个类别创建虚拟/二元变量</td>
+</tr>
+<tr>
+<td>CountFrequencyEncoder</td>
+<td>❎</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>用观测次数或频率替换类别</td>
+</tr>
+<tr>
+<td>OrdinalEncoder</td>
+<td>若按目标排序，则为✅；否则为❎</td>
+<td>✅</td>
+<td>✅</td>
+<td>若数字被任意分配，则为✅；否则为❎</td>
+<td>将类别按顺序替换为整数，可以是任意的顺序或按目标平均值排序</td>
+</tr>
+<tr>
+<td>MeanEncoder</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>数字将被返回，但不同类别的平均值没有数学意义</td>
+<td>按类别的目标平均值替换类别</td>
+</tr>
+<tr>
+<td>WoEEncoder</td>
+<td>✅</td>
+<td>❎</td>
+<td>✅</td>
+<td>❎</td>
+<td>将类别替换为权重值</td>
+</tr>
+<tr>
+<td>PRatioEncoder</td>
+<td>✅</td>
+<td>❎</td>
+<td>✅</td>
+<td>❎</td>
+<td>用概率比率替换类别</td>
+</tr>
+<tr>
+<td>DecisionTreeEncoder</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>用决策树的预测替换类别</td>
+</tr>
+<tr>
+<td>RareLabelEncoder</td>
+<td></td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>将不常见的类别分组到一个新类别中</td>
+</tr>
+</tbody>
+</table>
+<p>在进行类别编码时，需要注意以下几点：</p>
+<ul>
+<li>
+<p>选择适当的编码方法根据变量的类型和业务需求。</p>
+</li>
+<li>
+<p>处理编码可能导致的维度爆炸问题，特别是在独热编码等方法中。</p>
+</li>
+<li>
+<p>考虑类别的数量和稀疏性，选择合适的编码方法以平衡信息损失和计算效率。</p>
+</li>
+</ul>
+<h2 id="离散化">离散化</h2>
+<p>离散化是数据预处理中常用的一种技术，可以将连续变量转换为离散的分箱，以便更好地与一些模型进行配合，或者使得数据更符合实际问题的特性。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EqualFrequencyDiscretiser()</td>
+<td>将值分为具有相似观测数的区间。</td>
+</tr>
+<tr>
+<td>EqualWidthDiscretiser()</td>
+<td>将值分为相等大小的区间。</td>
+</tr>
+<tr>
+<td>ArbitraryDiscretiser()</td>
+<td>将值分为用户预定义的区间。</td>
+</tr>
+<tr>
+<td>DecisionTreeDiscretiser()</td>
+<td>用决策树的预测值替换值，这些值是离散的。</td>
+</tr>
+<tr>
+<td>GeometricWidthDiscretiser()</td>
+<td>将变量分为几何区间。</td>
+</tr>
+<tr>
+<td>KBinsDiscretizer</td>
+<td>使用K均值对变量进行离散化。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="异常值处理">异常值处理</h2>
+<p>异常值处理能够提高模型的稳定性和预测能力，提高模型的鲁棒性。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Winsorizer()</td>
+<td>将变量的值限制在自动确定的极值上</td>
+</tr>
+<tr>
+<td>ArbitraryOutlierCapper()</td>
+<td>将变量的值限制在用户确定的值上</td>
+</tr>
+<tr>
+<td>OutlierTrimmer()</td>
+<td>从数据框中删除异常值</td>
+</tr>
+</tbody>
+</table>
+<h2 id="缩放">缩放</h2>
+<p>缩放方法可以帮助调整数据的分布，使其更符合模型的假设，从而提高模型的性能和鲁棒性。缩放方法比较适合用于线性模型、KNN和神经网络中。</p>
+<table>
+<thead>
+<tr>
+<th>转换器</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LogTransformer</td>
+<td>对数转换器</td>
+</tr>
+<tr>
+<td>LogCpTransformer</td>
+<td>对数截断转换器</td>
+</tr>
+<tr>
+<td>ReciprocalTransformer</td>
+<td>倒数转换器</td>
+</tr>
+<tr>
+<td>ArcsinTransformer</td>
+<td>反正弦转换器</td>
+</tr>
+<tr>
+<td>PowerTransformer</td>
+<td>幂次转换器</td>
+</tr>
+<tr>
+<td>BoxCoxTransformer</td>
+<td>Box-Cox转换器</td>
+</tr>
+<tr>
+<td>YeoJohnsonTransformer</td>
+<td>Yeo-Johnson转换器</td>
+</tr>
+<tr>
+<td>FunctionTransformer</td>
+<td>允许自定义的函数应用于数据的转换器</td>
+</tr>
+<tr>
+<td>PowerTransformer</td>
+<td>将数据进行幂次转换，可选择是Yeo-Johnson转换还是Box-Cox转换</td>
+</tr>
+</tbody>
+</table>
+<h2 id="新的特征">新的特征</h2>
+<p>创造新的特征需要一定的想象力，但通常遵循一些基本模式。在创造新的特征时，需要根据数据的特点和问题的需求灵活运用不同的特征创建方法。</p>
+<table>
+<thead>
+<tr>
+<th>转换器</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MathFeatures</td>
+<td>数学特征</td>
+</tr>
+<tr>
+<td>RelativeFeatures</td>
+<td>相对特征</td>
+</tr>
+<tr>
+<td>CyclicalFeatures</td>
+<td>周期特征</td>
+</tr>
+<tr>
+<td>GroupedFeatures</td>
+<td>分组特征</td>
+</tr>
+<tr>
+<td>PolynomialFeatures</td>
+<td>多项式特征</td>
+</tr>
+<tr>
+<td>SplineTransformer</td>
+<td>样条特征</td>
+</tr>
+</tbody>
+</table>
+<h2 id="特征筛选">特征筛选</h2>
+<p>特征选择是指从原始特征集中选择出最具预测能力的特征子集的过程。有很多类型的方法，如下是一些基础方法：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DropFeatures()</td>
+<td>根据用户确定的特征名删除任意特征</td>
+</tr>
+<tr>
+<td>DropConstantFeatures()</td>
+<td>删除常量和准常量特征</td>
+</tr>
+<tr>
+<td>DropDuplicateFeatures()</td>
+<td>删除重复的特征</td>
+</tr>
+<tr>
+<td>DropCorrelatedFeatures()</td>
+<td>删除相关的特征</td>
+</tr>
+<tr>
+<td>SmartCorrelatedSelection()</td>
+<td>从相关特征组中删除不太有用的特征</td>
+</tr>
+<tr>
+<td>SelectBySingleFeaturePerformance()</td>
+<td>根据单个特征模型性能选择特征</td>
+</tr>
+<tr>
+<td>RecursiveFeatureElimination()</td>
+<td>通过评估模型性能递归地移除特征</td>
+</tr>
+<tr>
+<td>RecursiveFeatureAddition()</td>
+<td>通过评估模型性能递归地添加特征</td>
+</tr>
+<tr>
+<td>DropHighPSIFeatures()</td>
+<td>删除具有高Population Stability Index的特征</td>
+</tr>
+<tr>
+<td>SelectByInformationValue()</td>
+<td>删除信息值较低的特征</td>
+</tr>
+<tr>
+<td>SelectByShuffling()</td>
+<td>如果对特征值进行洗牌会导致模型性能下降，则选择该特征</td>
+</tr>
+<tr>
+<td>SelectByTargetMeanPerformance()</td>
+<td>使用目标均值作为性能代理，选择性能良好的特征</td>
+</tr>
+<tr>
+<td>ProbeFeatureSelection()</td>
+<td>选择重要性大于随机变量的特征</td>
+</tr>
+</tbody>
+</table>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/Kaggle知识点：表格数据特征工程范式/" class="post-title gt-a-link">
+                    Kaggle知识点：表格数据特征工程范式
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

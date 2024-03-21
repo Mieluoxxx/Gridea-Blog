@@ -1,0 +1,402 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Kaggle知识点：模型加权集成7种方法 | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Kaggle知识点：模型加权集成7种方法
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2024-02-05 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/aRj5UB0Z5/" class="post-tags">
+                            # kaggle
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <blockquote>
+<p>模型加权集成是一种通过组合多个不同模型来提高预测准确性的方法。这种方法的核心思想是将多个模型预测的结果进行加权平均，以获得更准确的结果。本文将介绍模型加权集成的概念、原理和实际应用，以及其相对于单一模型预测的优势。</p>
+</blockquote>
+<p>在竞赛中如果对多个预测结果进行集成，最方便的做法是<strong>直接对预测结果进行加权求和</strong>。此时不同任务，加权方法不同：</p>
+<ul>
+<li>
+<p>分类任务：类别投票 &amp; 概率值加权</p>
+</li>
+<li>
+<p>回归任务：预测值加权</p>
+</li>
+<li>
+<p>排序任务：排序次序加权</p>
+</li>
+<li>
+<p>目标检测任务：预测结果NMS</p>
+</li>
+<li>
+<p>语义分割任务：像素类别投票 &amp; 加权</p>
+</li>
+</ul>
+<p>在本文中我们将介绍最常见的分类 &amp; 回归任务的结果加权方法，也就是Blend操作。</p>
+<h2 id="多样性-精度差异">多样性 &amp; 精度差异</h2>
+<p>在对结果进行集成时需要考虑如下两点：</p>
+<ul>
+<li>
+<p>模型的多样性：</p>
+</li>
+<li>
+<p>模型的精度差异；</p>
+</li>
+</ul>
+<p>集成学习的精度收益是需要模型&amp;预测结果的多样性，如果多样性不足，则最终预测结果和单个模型类似。</p>
+<p>精度差异是指模型之间的精度差异，如果精度差异很大最终集成的效果也不会很好。如下情况2的模型精度差异就较大。</p>
+<pre><code class="language-Plain">三个模型精度：[0.9, 0.92, 0.92]
+三个模型精度：[0.9, 0.8, 0.7]
+</code></pre>
+<h2 id="out-of-fold">Out of fold</h2>
+<p>Out of fold又名袋外预测，是一个模型在交叉验证的过程中使用训练部分进行训练，然后对验证集进行预测，交替得到训练集和测试集预测结果。</p>
+<p>如果我们拥有三个模型，通过交叉验证可以得到3个训练集预测结果和3个验证集预测结果。</p>
+<p><strong>如下展示的几种方法，都需要训练集标签 与 训练集预测结果搜索得到参数，然后将参数在测试集上进行使用。</strong></p>
+<h2 id="方法1均值加权">方法1：均值加权</h2>
+<ul>
+<li>
+<p>原理：对所有模型的预测结果计算均值；</p>
+</li>
+<li>
+<p>优点：简单，过拟合可能性低；</p>
+</li>
+<li>
+<p>缺点：会受到模型原始精度差异的影响；</p>
+</li>
+</ul>
+<pre><code class="language-Plain">oof_preds = []
+for col in oofCols:
+    oof_preds.append(oof_df[col])
+
+y_avg = np.mean(np.array(oof_preds), axis=0)
+</code></pre>
+<h2 id="方法2权重加权">方法2：权重加权</h2>
+<ul>
+<li>
+<p>原理：对所有模型的预测结果加权求和；</p>
+</li>
+<li>
+<p>优点：比均值更加可控；</p>
+</li>
+<li>
+<p>缺点：权重需人工设置，更容易过拟合；</p>
+</li>
+</ul>
+<pre><code class="language-Plain">weights = [1,2,3]
+y_wtavg = np.zeros(len(oof_df))
+
+for wt, col in zip(weights, oofCols):
+    y_wtavg += (wt*oof_df[col])
+
+y_wtavg = y_wtavg / sum(weights)
+</code></pre>
+<h2 id="方法3排序加权">方法3：排序加权</h2>
+<ul>
+<li>
+<p>原理：对预测结果进行排序，使用次序代替原始取值；</p>
+</li>
+<li>
+<p>优点：适合分类任务，对概率进行集成；</p>
+</li>
+<li>
+<p>缺点：会受到模型原始精度差异的影响；</p>
+</li>
+</ul>
+<pre><code class="language-Plain">rankPreds = []
+for i, col in enumerate(oofCols):
+    rankPreds.append(oof_df[col].rank().values)
+
+y_rankavg = np.mean(np.array(rankPreds), axis=0)
+</code></pre>
+<h2 id="方法4排序权重加权">方法4：排序权重加权</h2>
+<ul>
+<li>
+<p>原理：对预测结果进行排序，使用次序进行加权求和；</p>
+</li>
+<li>
+<p>优点：比均值更加可控；</p>
+</li>
+<li>
+<p>缺点：权重需人工设置，更容易过拟合；</p>
+</li>
+</ul>
+<pre><code class="language-Plain">rankPreds = []
+weights = [1,2,3]
+
+for i, col in enumerate(oofCols):
+    rankPreds.append(oof_df[col].rank().values * weights[i])
+
+
+y_rankavg = np.mean(np.array(rankPreds), axis=0)
+</code></pre>
+<h2 id="方法5爬山法加权">方法5：爬山法加权</h2>
+<ul>
+<li>
+<p>原理：权重进行搜索，保留最优的权重；</p>
+</li>
+<li>
+<p>优点：可以自动权重权重大小；</p>
+</li>
+<li>
+<p>缺点：更容易过拟合；</p>
+</li>
+</ul>
+<pre><code class="language-Plain">for w1 in np.linspace(0, 1, 100):
+  for w2 in np.linspace(0, w2, 100):
+    w3 = 1 - w1 - w3
+    
+    如果 w1, w2, w3取得更好的精度，保留权重
+    否则尝试下一组权重组合
+</code></pre>
+<h2 id="方法6线性回归加权">方法6：线性回归加权</h2>
+<ul>
+<li>
+<p>原理：使用线性回归确定权重</p>
+</li>
+<li>
+<p>优点：可以自动权重权重大小；</p>
+</li>
+<li>
+<p>缺点：需要额外训练，容易过拟合；</p>
+</li>
+</ul>
+<pre><code class="language-Plain">from sklearn.linear_model import LinearRegression
+
+lr = LinearRegression(fit_intercept=False)
+lr.fit(
+   三个模型对训练集预测结果，
+   训练集标签
+)
+
+lr.coef_ # 线性回归的权重
+</code></pre>
+<h2 id="方法7参数优化加权">方法7：参数优化加权</h2>
+<ul>
+<li>
+<p>原理：使用优化方法搜索权重</p>
+</li>
+<li>
+<p>优点：可以自动权重权重大小；</p>
+</li>
+<li>
+<p>缺点：需要额外训练，容易过拟合；</p>
+</li>
+</ul>
+<pre><code class="language-Plain">def f(x):
+    return x[0]**2 + x[1]**2 + (5 - x[0] - x[1])
+    
+from scipy import optimize
+minimum = optimize.fmin(f, [1, 1])
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/Kaggle知识点：特征基础编码方法/" class="post-title gt-a-link">
+                    Kaggle知识点：特征基础编码方法
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

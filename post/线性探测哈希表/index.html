@@ -1,0 +1,358 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>线性探测哈希表 | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    线性探测哈希表
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-12-02 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/6oI6VSB0xo/" class="post-tags">
+                            # 哈希表
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <pre><code class="language-python">from typing import Optional, Union, List
+
+# 插入装饰器
+def insertion_error_handler(func):
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        if not result:
+            raise ValueError(&quot;Hash table insertion failed.&quot;)
+        return result
+
+    return wrapper
+
+# 删除装饰器
+def deletion_result_handler(func):
+    def wrapper(self, key: Union[int, str]):
+        result = func(self, key)
+        if result:
+            print(f&quot;{key} 元素删除成功&quot;)
+        else:
+            print(f&quot;删除失败: {key} 元素不存在&quot;)
+        return result
+
+    return wrapper
+
+
+class HashTable:
+    def __init__(self, size: int):
+        self.size = size
+        self.table = [None] * size
+        self.f = self._find_largest_prime_before_k(size)
+
+    # 求取index
+    def hash_function(self, key: Union[int, str]) -&gt; int:
+        if isinstance(key, int):
+            return key % self.f
+        elif key is None:
+            return 0
+        else:
+            return sum(ord(char) for char in str(key)) % self.f
+
+    # 线性探测
+    def linear_probe(self, index: int, key: Union[int, str]) -&gt; int:
+        i = 1
+        while self.table[(index + i) % self.size] is not None:
+            i += 1
+        return (index + i) % self.size
+
+    # 插入
+    @insertion_error_handler
+    def insert(self, key: Union[int, str], value: int) -&gt; bool:
+        index = self.hash_function(key)
+
+        if self.table[index] is None:
+            self.table[index] = [(key, value)]
+            return True
+        elif any(existing_key == key for existing_key, _ in self.table[index]):
+            return True
+        else:
+            index = self.linear_probe(index, key)
+            self.table[index] = [(key, value)]
+            return True
+
+    # 查询
+    def get(self, key: Union[int, str]) -&gt; Optional[int]:
+        index = self.hash_function(key)
+        while index &lt; self.size:
+            if self.table[index] is not None:
+                for pair in self.table[index]:
+                    if pair[0] == key:
+                        return pair[1]
+            index += 1
+        return None
+
+   # 删除
+    @deletion_result_handler
+    def delete(self, key: Union[int, str]) -&gt; bool:
+        index = self.hash_function(key)
+
+        def delete_from_slot(slot_index):
+            if self.table[slot_index] is not None:
+                for i, (existing_key, _) in enumerate(self.table[slot_index]):
+                    if existing_key == key:
+                        del self.table[slot_index][i]
+                        if not self.table[slot_index]:
+                            self.table[slot_index] = None
+                        return True
+            return False
+
+        if self.table[index] is None:
+            j = 1
+            while j &lt; self.size:
+                slot_index = (index + j) % self.size
+                if delete_from_slot(slot_index):
+                    return True
+                j += 1
+            return False
+        else:
+            if delete_from_slot(index):
+                return True
+
+            index = self.linear_probe(index, key)
+            return delete_from_slot(index)
+
+    def _sieve_of_eratosthenes(self, n: int) -&gt; List[int]:
+        primes = [True] * (n + 1)
+        primes[0], primes[1] = False, False
+
+        for i in range(2, int(n**0.5) + 1):
+            if primes[i]:
+                for j in range(i * i, n + 1, i):
+                    primes[j] = False
+
+        return [num for num, is_prime in enumerate(primes) if is_prime]
+
+    def _find_largest_prime_before_k(self, k: int) -&gt; Optional[int]:
+        primes = self._sieve_of_eratosthenes(k)
+        return max(primes) if primes else None
+
+
+# Usage
+hash_table = HashTable(10)
+hash_table.insert(&quot;apple&quot;, 5)
+hash_table.insert(&quot;ppale&quot;, 6)
+hash_table.insert(&quot;banana&quot;, 8)
+
+print(hash_table.get(&quot;apple&quot;))  # Output: 5
+print(hash_table.get(&quot;ppale&quot;))  # Output: 6
+print(hash_table.get(&quot;banana&quot;))  # Output: 8
+
+hash_table.delete(&quot;apple&quot;)
+hash_table.delete(&quot;ppale&quot;)
+hash_table.delete(&quot;paple&quot;) 
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/暗通道先验去雾算法/" class="post-title gt-a-link">
+                    暗通道先验去雾算法
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,550 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>遗传算法 | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    遗传算法
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2023-10-27 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/DlidbvnZxMD/" class="post-tags">
+                            # 优化
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="遗传算法简介">遗传算法简介</h2>
+<p>​	在生物进化过程中，大都会经历繁殖、交叉、变异和选择四个基本阶段。繁殖生物都有的基本现象，每个个体都是其上一代经过繁殖所得来。通过繁殖，子代和亲代能够保证生物性状的相似性。而有性繁殖是被证明最有利于进化的繁殖方式。生物在有性繁殖下一代时，两个同源染色体利用交叉而重新组合产生新染色体，即两个染色体进行某些部分进行互换。变异是染色体上某些基因发生突变现象。选择就是适应环境的物种会生存下来，而不适应环境的物种就会被淘汰，即“适者生存，优胜劣汰”。</p>
+<h3 id="编码方式">编码方式</h3>
+<p>遗传算法的编码方式有：二进制编码、自然数编码、实数编码和树形编码。二进制编码相邻的整数存在较大的汉明距离，降低遗传算子的搜索效率，求解高维优化问题的二进制编码串搜索效率低。于是我选择自然数编码，主要原因是简单。</p>
+<h3 id="适应度函数">适应度函数</h3>
+<p>在遗传算法中，每个个体都有一个适应度函数值相对应。其优劣需要通过适应度函数值大小进行定量评价。个体越优，其适应度函数值越大。适应度函数值是执行“适者生存，优胜劣汰”的依据，直接决定搜索群体的进化行为。在这里，我利用 fitness = 种群最优距离/当前基因距离，将原本最小化距离问题转化为最大化fitness问题。</p>
+<h3 id="选择操作">选择操作</h3>
+<p>​	选择就是从当前群体中选择适应度函数值较大的个体，使这些优良个体有可能作为父代来繁殖下一代。在该阶段，个体的适应度函数值越大，被选择作为父代的概率越大，个体的适应度函数值越小，被淘汰的概率越大。</p>
+<ul>
+<li>
+<p>精英主义（elitist model）:将群体中适应度最高的个体不进行交叉而直接复制到下一代中，保证遗传算法终止时得到的最后结果一定是历代出现过的最高适应度的个体</p>
+</li>
+<li>
+<p>锦标赛（tournament selection model）:从群体中随机选择k各个体将其中适应度最高的个体保存到下一代。这一过程反复执行，直到保存到下一代的个体数达到预先设定的数量为止。</p>
+</li>
+</ul>
+<p>我采用精英主义+锦标赛的选择方式，可以结合两种方法的优点，在保留精英个体的同时，引入一定的随机性，使得遗传算法能够在搜索过程中更好地探索解空间。经过实验这样的方法在收敛速度和精度上都有很大的成效。</p>
+<h3 id="交叉操作">交叉操作</h3>
+<pre><code>在遗传算法中，交叉是产生新解的重要操作。要进行交叉，首先需要解决配对问题，采用随机配对是最基本的方法。由于交叉可能会出现不满足约束条件的非法染色体。所以常常会构造惩罚函数和对遗传操作进行适当的修正，使其满足优化问题的约束条件。而在旅行商问题中，常常采用部分匹配交叉PMX,顺序交叉OX和循环交叉CX,在我的实验中我选择的是PMX
+</code></pre>
+<h3 id="变异操作">变异操作</h3>
+<pre><code>在遗传算法中，变异是产生新解的另一种操作。交叉操作相当于进行全局探索，而变异操作相当于进行局部开发。而全局搜索和局部开发都是智能优化算法必备的两种搜索能力。 遗传算法中的变异操作增加了局部随机搜索能力，从而维持种群的多样性，在我的算法中我选择了逆转变异，将两点之间的基因值以逆向排序插入原位置中。
+</code></pre>
+<p>算法设计</p>
+<ul>
+<li>
+<p>(1)产生初始群种。</p>
+</li>
+<li>
+<p>(2)计算每个个体适应度函数值。</p>
+</li>
+<li>
+<p>(3)利用锦标赛和精英主义选择进入下一代群体中的个体。</p>
+</li>
+<li>
+<p>(4)两两配对的个体进行交叉操作以产生新个体。</p>
+</li>
+<li>
+<p>(5)新个体进行变异操作。</p>
+</li>
+<li>
+<p>(6)进行极值优化，防止进入局部最优解。</p>
+</li>
+<li>
+<p>(7)反复执行（2）到（6）直到满足算法终止条件。</p>
+</li>
+</ul>
+<h2 id="完整代码">完整代码</h2>
+<pre><code class="language-python"># -*- encoding: utf-8 -*-
+import numpy as np
+import pandas as pd
+from tensorboardX import SummaryWriter
+from matplotlib import pyplot as plt
+
+class TSP(object):
+    def __init__(self, c_rate, m_rate, pop_size, iteration=500, seed=2023):
+        self.cities = np.array([])  # 城市数组
+        self.cities_name = np.array([])
+        self.city_size = -1  # 标记城市数目
+        self.pop_size = int(pop_size)  # 种群大小
+        self.fitness = np.zeros(self.pop_size)  # 种群适应度
+        self.c_rate = c_rate  # 交叉阈值
+        self.m_rate = m_rate  # 突变阈值
+        self.iteration = iteration  # 迭代次数
+        self.best_dist = -1  # 最优距离
+        self.best_gene = [] # 最优路径
+        np.random.seed(seed)  # 随机种子
+
+        self.init()  # 初始化
+        self.evolution()  # 进化
+        self.draw()  # 绘制
+
+    def init(self):
+        self.data = pd.read_csv(&quot;eil51.txt&quot;, delimiter=&quot; &quot;, header=None).values
+        self.cities = self.data[:, 1:]
+        self.cities_name = self.data[:, 0]
+        self.city_size = self.data.shape[0]
+        self.pop = self.create_pop(self.pop_size)  # 创建种群
+        self.fitness = self.get_fitness(self.pop)  # 计算初始种群适应度
+
+    def evolution(self):
+        # 主程序：迭代进化种群
+        writer = SummaryWriter()
+        for i in range(self.iteration):
+            best_f_index = np.argmax(self.fitness)
+            worst_f_index = np.argmin(self.fitness)
+            local_best_gene = self.pop[best_f_index]
+            local_best_dist = self.gen_distance(local_best_gene)
+            if i == 0:
+                self.best_gene = local_best_gene
+                self.best_dist = self.gen_distance(local_best_gene)
+
+            if local_best_dist &lt; self.best_dist:
+                self.best_dist = local_best_dist  # 记录最优值
+                self.best_gene = local_best_gene  # 记录最个体基因
+
+            else:
+                self.pop[worst_f_index] = self.best_gene
+            print(&quot;gen:%d evo,best dist :%s&quot; % (i, self.best_dist))
+
+            self.pop = self.select_pop(self.pop)  # 选择淘汰种群
+            self.fitness = self.get_fitness(self.pop)  # 计算种群适应度
+            for j in range(self.pop_size):
+                r = np.random.randint(0, self.pop_size - 1)
+                if j != r:
+                    self.pop[j] = self.cross(self.pop[j], self.pop[r])  # 交叉种群中第j,r个体的基因
+                    self.pop[j] = self.mutate(self.pop[j])  # 突变种群中第j个体的基因
+            self.best_gene = self.EO(self.best_gene)  # 极值优化，防止收敛局部最优
+            self.best_dist = self.gen_distance(self.best_gene)  # 记录最优值
+            writer.add_scalar(&quot;fitness&quot;, self.best_dist, i)
+        writer.close()
+
+    def create_pop(self, size):
+        pop = [np.random.permutation(self.city_size) for _ in range(size)]
+        return np.array(pop)
+
+    def get_fitness(self, pop):
+        d = np.array([])  # 适应度记录数组
+        for i in range(pop.shape[0]):
+            gen = pop[i]  # 取其中一条基因（编码解，个体）
+            dis = self.gen_distance(gen)  # 计算此基因优劣（距离长短）
+            dis = self.best_dist / dis  # 当前最优距离除以当前pop[i]（个体）距离；越近适应度越高，最优适应度为1
+            d = np.append(d, dis)  # 保存适应度pop[i]
+        return d
+
+    def get_local_fitness(self, gen, i):
+        &quot;&quot;&quot;
+        计算地i个城市的邻域
+        交换基因数组中任意两个值组成的解集：称为邻域。计算领域内所有可能的适应度
+        :param gen:城市路径
+        :param i:第i城市
+        :return:第i城市的局部适应度
+        &quot;&quot;&quot;
+        di = 0
+        fi = 0
+        if i == 0:
+            di = self.ct_distance(self.cities[gen[0]], self.cities[gen[-1]])
+        else:
+            di = self.ct_distance(self.cities[gen[i]], self.cities[gen[i - 1]])
+        od = []
+        for j in range(self.city_size):
+            if i != j:
+                od.append(
+                    self.ct_distance(self.cities[gen[i]], self.cities[gen[i - 1]])
+                )
+        mind = np.min(od)
+        fi = di - mind
+        return fi
+
+    def EO(self, gen):
+        # 极值优化，传统遗传算法性能不好，这里混合EO
+        # 其会在整个基因的领域内，寻找一个最佳变换以更新基因
+        local_fitness = np.zeros(self.city_size)
+        for g in range(self.city_size):
+            local_fitness[g] = self.get_local_fitness(gen, g)
+        max_city_i = np.argmax(local_fitness)
+        maxgen = np.copy(gen)
+        if 1 &lt; max_city_i &lt; self.city_size - 1:
+            for j in range(max_city_i):
+                maxgen = np.copy(gen)
+                jj = max_city_i
+                while jj &lt; self.city_size:
+                    gen1 = self.exechange_gen(maxgen, j, jj)
+                    d = self.gen_distance(maxgen)
+                    d1 = self.gen_distance(gen1)
+                    if d &gt; d1:
+                        maxgen = gen1[:]
+                    jj += 1
+        gen = maxgen
+        return gen
+
+    def select_pop(self, pop):
+        # 选择种群，优胜劣汰，锦标赛选择与精英保留策略的结合
+        tournament_size = 3  # 锦标赛的大小，即每次选择的个体数量
+        elite_index = np.argmax(self.fitness)  # 最优个体的索引
+        elite = pop[elite_index].copy()  # 复制最优个体作为精英个体
+        selected_pop = [elite]  # 将精英个体加入选中的个体中
+
+        for _ in range(self.pop_size - 1):
+            tournament = np.random.choice(
+                range(self.pop_size), size=tournament_size, replace=False
+            )  # 随机选择tournament_size个个体作为锦标赛参与者
+            best_f_index = max(
+                tournament, key=lambda x: self.fitness[x]
+            )  # 选择适应度最高的个体作为胜者
+            selected_pop.append(pop[best_f_index].copy())  # 将胜者加入选中的个体中
+
+        return np.array(selected_pop)
+
+    def cross(self, part1, part2):
+        &quot;&quot;&quot;交叉p1,p2的部分基因片段&quot;&quot;&quot;
+        if np.random.rand() &gt; self.c_rate:
+            return part1
+        index1 = np.random.randint(0, self.city_size - 1)
+        index2 = np.random.randint(index1, self.city_size - 1)
+        tempGene = part2[index1:index2]  # 交叉的基因片段
+        newGene = []
+        p1len = 0
+        for g in part1:
+            if p1len == index1:
+                newGene.extend(tempGene)  # 插入基因片段
+            if g not in tempGene:
+                newGene.append(g)
+            p1len += 1
+        newGene = np.array(newGene)
+
+        if newGene.shape[0] != self.city_size:
+            print(&quot;c error&quot;)
+            return self.creat_pop(1)
+        return newGene
+
+    def mutate(self, gene):
+        &quot;&quot;&quot;突变&quot;&quot;&quot;
+        if np.random.rand() &gt; self.m_rate:
+            return gene
+        index1 = np.random.randint(0, self.city_size - 1)
+        index2 = np.random.randint(index1, self.city_size - 1)
+        newGene = self.reverse_gen(gene, index1, index2)
+        if newGene.shape[0] != self.city_size:
+            print(&quot;m error&quot;)
+            return self.creat_pop(1)
+        return newGene
+
+    def reverse_gen(self, gen, i, j):
+        # 函数：翻转基因中i到j之间的基因片段
+        if i &gt;= j:
+            return gen
+        if j &gt; self.city_size - 1:
+            return gen
+        part1 = np.copy(gen)
+        tempGene = part1[i:j]
+        newGene = []
+        p1len = 0
+        for g in part1:
+            if p1len == i:
+                newGene.extend(tempGene[::-1])  # 插入基因片段
+            if g not in tempGene:
+                newGene.append(g)
+            p1len += 1
+        return np.array(newGene)
+
+    def exechange_gen(self, gen, i, j):
+        # 函数：交换基因中i,j值
+        c = gen[j]
+        gen[j] = gen[i]
+        gen[i] = c
+        return gen
+
+    def gen_distance(self, gen):
+        # 计算基因所代表的总旅行距离
+        distance = 0.0
+        for i in range(-1, len(self.cities) - 1):
+            index1, index2 = gen[i], gen[i + 1]
+            city1, city2 = self.cities[index1], self.cities[index2]
+            distance += self.ct_distance(city1, city2)
+        return distance
+
+    def ct_distance(self, city1, city2):
+        # 计算2城市之间的欧氏距离
+        diff = city1 - city2
+        squared_diff = np.power(diff, 2)
+        sum_squared_diff = np.sum(squared_diff)
+        distance = np.sqrt(sum_squared_diff)
+        return distance
+
+    def draw(self):
+        x = [city[1] for city in self.data]
+        y = [city[2] for city in self.data]
+
+        # 绘制散点图
+        plt.scatter(x, y)
+
+        # 添加城市编号标签
+        for city in self.data:
+            plt.annotate(
+                city[0],
+                (city[1], city[2]),
+                textcoords=&quot;offset points&quot;,
+                xytext=(0, 10),
+                ha=&quot;center&quot;,
+            )
+
+        # 绘制连线
+        for i in range(len(self.best_gene) - 1):
+            city1 = self.best_gene[i]
+            city2 = self.best_gene[i + 1]
+            x1, y1 = self.data[city1][1], self.data[city1][2]
+            x2, y2 = self.data[city2][1], self.data[city2][2]
+            plt.plot([x1, x2], [y1, y2], &quot;r-&quot;)
+
+        # 连接首尾城市
+        city1 = self.best_gene[-1]
+        city2 = self.best_gene[0]
+        x1, y1 = self.data[city1][1], self.data[city1][2]
+        x2, y2 = self.data[city2][1], self.data[city2][2]
+        plt.plot([x1, x2], [y1, y2], &quot;r-&quot;)
+
+        # 设置图形标题和坐标轴标签
+        plt.title(&quot;City Visualization&quot;)
+        plt.xlabel(&quot;X-coordinate&quot;)
+        plt.ylabel(&quot;Y-coordinate&quot;)
+
+        # 保存图像
+        plt.savefig(f'img/City_{self.pop_size}.png')
+
+        # 显示图形
+        plt.show()
+
+
+if __name__ == &quot;__main__&quot;:
+    c_rate = 0.3986  # 交叉阈值     0.4075 0.3986
+    m_rate = 0.253  # 突变阈值    0.4345 0.253
+    pop_size = 30  # 种群大小    84.64 83.73
+    iteration = 1200  # 迭代次数
+    seed = 2023  # 随机种子
+    tsp = TSP(c_rate, m_rate, pop_size, iteration, seed)
+
+with open(f'results/result_{pop_size}.txt', 'w') as f:
+    count = 0
+    for item in tsp.best_gene:
+        f.write(&quot;%s &quot; % item)
+        count += 1
+        if count % 10 == 0:
+            f.write(&quot;\n&quot;)
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/Hyprland/" class="post-title gt-a-link">
+                    Hyprland：Linux最终DE
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,395 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Rust简易入门（五）Borrowing借用&amp;&amp;Lifetime生命周期 | 咕噜咕噜魔法使</title>
+
+<link rel="shortcut icon" href="https://lab.moguw.top/favicon.ico?v=1711027564217">
+
+<link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://lab.moguw.top/styles/main.css">
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+
+    
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/base16/solarized-light.min.css">
+
+<script src="https://fastly.jsdelivr.net/combine/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js,gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+
+<!-- <script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/cpp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/csharp.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/c.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/python.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/rust.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/xml.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/javascript.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/powershell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/shell.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/sql.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/http.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/go.min.js"></script>
+<script src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/languages/css.min.js"></script>
+ -->
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.css" />
+<script src="https://fastly.jsdelivr.net/npm/viewerjs@1.10.2/dist/viewer.min.js"></script>
+
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+    
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="/">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            咕噜咕噜魔法使
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="https://lab.moguw.top/tag/nl6HTtVUL/" class="menu gt-a-link">
+                    考研408
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1711027564217"
+                action="/search/">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Rust简易入门（五）Borrowing借用&amp;&amp;Lifetime生命周期
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2024-03-17 ·
+                    </time>
+                    
+                        <a href="https://lab.moguw.top/tag/XHu5IHVO6/" class="post-tags">
+                            # Rust
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="borring-borrow-checker-lifetime">Borring &amp;&amp; Borrow Checker &amp;&amp; Lifetime</h2>
+<h3 id="borrowing引用的函数式声明">Borrowing（引用的函数式声明）</h3>
+<p>一个玩意的两种描述</p>
+<p>引用（reference）：</p>
+<ol>
+<li>
+<p>引用是一种变量的别名，通过 &amp; 符号来创建（非所有权）</p>
+</li>
+<li>
+<p>引用可以是不可变的（&amp;T）或可变的（&amp;mut T）</p>
+</li>
+<li>
+<p>引用允许在不传递所有权的情况下访问数据，他们是安全且低开销的</p>
+</li>
+</ol>
+<p>借用（Borrowing）：</p>
+<ol>
+<li>
+<p>借用是通过引用（Reference）来借用（Borrow）数据，从而在一段时间内访问数据而不借用它</p>
+</li>
+<li>
+<p>借用氛围可变借用和不可变借用。可变借用（&amp;mut）允许修改数据，但在生命周期内只能有一个可变借用。不可变借用（&amp;）允许多个同时存在，但不允许修改数据</p>
+</li>
+</ol>
+<h3 id="borrow-checker">Borrow Checker</h3>
+<ol>
+<li>
+<p>不可变引用规则：<br>
+在任何给定的时间，要么有一个可变引用，要么有多个不可变引用，但不能同时存在可变引用与不可变引用。这确保了在同一时间内只有一个地方对数据进行修改，或者有多个地方同时读取数据</p>
+</li>
+<li>
+<p>可变引用规则<br>
+在任何给定的时间，只能有一个可变引用来访问数据。这防止了并发修改相同数据的问题，从而防止数据竞争</p>
+</li>
+<li>
+<p>引用的生命周期必须在被引用的数据有效时间范围内。这防止了悬垂引用，即引用的数据已经被销毁，但引用仍然存在</p>
+</li>
+<li>
+<p>可变引用与不可变引用不互斥<br>
+可以同时存在多个不可变引用，因为不可变引用不会修改数据，不会影响到其他引用。但不可变引用与可变引用之间是互斥的。</p>
+</li>
+</ol>
+<pre><code class="language-Rust">fn main(){
+    let mut s = String::from(&quot;Hello&quot;);
+    
+    let r1 = &amp;s;
+    let r2 = &amp;s;
+    println!(&quot;{} {}&quot;, r1, r2);
+    
+    let r3 = &amp;mut s;
+    println!(&quot;{}&quot;, r3);
+    
+    let result: &amp;str;
+    {
+        // result = &quot;hello&quot;;   // 初始化不影响生命周期
+        let r4 = &amp;s;
+        result = ff(r4);
+        
+    }
+    println!(&quot;{}&quot;, result);
+}
+
+fn ff&lt;'a&gt;(s: &amp;'a str) -&gt; &amp;'a str {
+    s
+}
+</code></pre>
+<h2 id="lifetime-与-函数">Lifetime 与 函数</h2>
+<p>大多数情况下，生命周期是隐式且被推断的</p>
+<p>生命周期的主要目的是防止悬垂引用</p>
+<p>关于&quot;悬垂引用”的概念是指，引用指向的数据在代码结束后被释放，但引用仍然存在。生命周期的引入有助于确保引用的有效性，防止程序在运行时出现悬垂引用的情况。通过生命周期的推断，Rust能够在编译时检查代码，确保引用的有效性而不是在运行时出现悬垂引用的错误。</p>
+<p>编译器在没有显式注解的情况下，使用三个规则来推断这些生命周期：</p>
+<ol>
+<li>
+<p>第一个规则是每个作为引用的参数都会得到它自己的生命周期参数。</p>
+</li>
+<li>
+<p>第二个规则是，如果只有一个输入生命周期参数，那么该生命周期将被分配给所有输出生命周期参数（该生命周期将分配给返回值）。</p>
+</li>
+<li>
+<p>第三个规则是，如果有多个输入生命周期参数，但其中一个是对self或不可变se|f的引用时。因为在这种情况下它是一个方法，所以se|f的生命周期被分配给所有输出生命周期 参数</p>
+</li>
+</ol>
+<pre><code class="language-Rust">fn longest&lt;'a&gt;(s1: &amp;'a str, s2: &amp;'a str) -&gt; &amp;'a str {
+    if s1.len() &gt; s2.len() {
+        s1
+    } else {
+        s2
+    }
+}
+
+fn longest_str&lt;'a, 'b, 'out&gt;(s1: &amp;'a str, s2: &amp;'b str) -&gt; &amp;'out str 
+where 
+    'a : 'out,
+    'b : 'out,
+{
+    if s1.len() &gt; s2.len() {
+        s1
+    } else {
+        s2
+    }
+}
+
+fn no_need(s: &amp;'static str, s1: &amp;str) -&gt; &amp;'static str{
+    s
+}
+
+fn main(){
+    println!(&quot;no need {}&quot;, no_need(&quot;hh&quot;, &quot;nn&quot;));
+    
+    let s1 = &quot;hello world&quot;;
+    let s2 = &quot;hello&quot;;
+    println!(&quot;longest {}&quot;, longest(s1, s2));
+}
+</code></pre>
+<h2 id="lifetime-与-struct">Lifetime 与 Struct</h2>
+<p><strong>结构体的引用</strong></p>
+<ul>
+<li>
+<p>在结构体中的引用需要标注生命周期</p>
+</li>
+<li>
+<p>结构体的方法（&amp;self等）不需要标注生命周期</p>
+</li>
+</ul>
+<pre><code class="language-Rust">struct MyStruct&lt;'a&gt;{
+    text: &amp;'a str,
+}
+
+impl&lt;'a&gt; MyStruct&lt;'a&gt;{
+    fn get_length(&amp;self) -&gt; usize{
+        self.text.len()
+    }
+    fn modify_data(&amp;mut self) {
+        self.text = &quot;world2&quot;;
+    }
+}
+
+struct StringHolder{
+    data: String,
+}
+
+impl StringHolder{
+    fn get_length(&amp;self) -&gt; usize{
+        self.data.len()
+    }
+    fn get_reference&lt;'a&gt;(&amp;'a self) -&gt; &amp;'a String{
+        &amp;self.data
+    }
+    fn get_ref(&amp;self) -&gt; &amp;String{
+        &amp;self.data
+    }
+}
+
+fn main(){
+    let str1 = String::from(&quot;hello&quot;);
+    let mut x = MyStruct{
+        text: str1.as_str(),
+    };
+    
+    x.modify_data();
+    println!(&quot;{}&quot;, x.get_length());
+    
+    
+    let y = StringHolder{
+        data: &quot;hello&quot;.to_owned(),
+    };
+    println!(&quot;{}&quot;,y.get_reference());
+    println!(&quot;{}&quot;,y.get_ref());
+}
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://lab.moguw.top/post/hands-on-data-analysis-3/" class="post-title gt-a-link">
+                    动手学数据分析（三）数据重构
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">真真夜夜的小木屋</div>
+    <div class="social-container">
+        
+            
+                <a href="https://github.com/Mieluoxxx" target="_blank">
+                    <i class="fab fa-github gt-c-content-color-first"></i>
+                </a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+    </div>
+    <div>
+        Theme <a href="https://github.com/imhanjie/gridea-theme-pure" target="_blank">Pure</a>, Powered by <a
+                href="https://gridea.dev" target="_blank">Gridea</a> | <a href="https://lab.moguw.top/atom.xml" target="_blank">RSS</a>
+    </div>
+</div>
+
+        <script>
+  hljs.highlightAll();
+</script>
+
+        <script>
+(function() {
+	function addEventListener(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent('on' + type, handler);
+        }
+    }
+
+    addEventListener(window, 'load', function () {
+        var Viewer = window.Viewer;
+        var pictures = document.querySelector('.post-content');
+        var viewer = new Viewer(pictures);
+    });
+})();
+</script>
+
+
+        <script>
+            var ele = document.querySelector(".waline-visitor-count");
+            Object.defineProperty(ele, 'innerText', {
+                get: function() {
+                    return ele.innerText;
+                },
+                set: function(value) {
+                    ele.innerHTML = value;
+                    if (value > 0) {
+	                    var parent = document.querySelector(".leancloud_visitors");
+	                    parent.style.visibility="visible";
+	                }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>
